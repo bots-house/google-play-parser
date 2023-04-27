@@ -35,16 +35,16 @@ func (spec requestSpec) validate() error {
 	return nil
 }
 
-func request(ctx context.Context, client shared.HTTPClient, spec requestSpec) ([]byte, error) {
+func request(ctx context.Context, client shared.HTTPClient, spec requestSpec) ([]byte, string, error) {
 	spec.ensureNotNil()
 
 	if err := spec.validate(); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	request, err := http.NewRequestWithContext(ctx, spec.method, spec.url, nil)
 	if err != nil {
-		return nil, fmt.Errorf("prepare request: %w", err)
+		return nil, "", fmt.Errorf("prepare request: %w", err)
 	}
 
 	if spec.params != nil {
@@ -53,21 +53,21 @@ func request(ctx context.Context, client shared.HTTPClient, spec requestSpec) ([
 
 	response, err := client.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("do request: %w", err)
+		return nil, "", fmt.Errorf("do request: %w", err)
 	}
 
 	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected response: status: %s", response.Status)
+		return nil, "", fmt.Errorf("unexpected response: status: %s", response.Status)
 	}
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("read body: %w", err)
+		return nil, "", fmt.Errorf("read body: %w", err)
 	}
 
-	return body, nil
+	return body, request.URL.String(), nil
 }
 
 func parseDescription(description []any) string {
