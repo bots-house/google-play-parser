@@ -32,8 +32,6 @@ var appCMD = &cli.Command{
 			return fmt.Errorf("similar method: %w", err)
 		}
 
-		display(ctx, []models.App{result}, appTable)
-
-		return nil
+		return display(ctx, result)
 	},
 }

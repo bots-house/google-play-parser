@@ -35,35 +35,7 @@ var similarCMD = &cli.Command{
 		}
 
 		log.Ctx(ctx.Context).Debug().Msgf("similar apps founded: %d", len(result))
-		display(ctx, result, appTable)
 
-		return nil
+		return display(ctx, result)
 	},
-}
-
-func appTable(apps []models.App) ([]string, [][]string) {
-	var rows [][]string
-	for _, app := range apps {
-		rows = append(rows, []string{
-			app.Title,
-			app.URL,
-			func() string {
-				if app.Free {
-					return "Free"
-				}
-
-				return fmt.Sprintf("%.2f %s", app.Price, app.Currency)
-			}(),
-			app.ScoreText,
-			app.Developer,
-		})
-	}
-
-	return []string{
-		"Title",
-		"URL",
-		"Price",
-		"Score",
-		"Developer",
-	}, rows
 }
