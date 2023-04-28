@@ -58,17 +58,6 @@ func parseSimilarApps(ctx context.Context, client sh.HTTPClient, parsed shared.P
 		return nil, fmt.Errorf("clusters not found")
 	}
 
-	extractedClusters = shared.Filter(extractedClusters, func(elem any) bool {
-		filter := ramda.Path(clusterMapping.Title, elem)
-
-		filterStr, ok := filter.(string)
-		if !ok {
-			return ok
-		}
-
-		return filterStr == "Similar apps" || filterStr == "Similar games"
-	})
-
 	clusterURL, ok := ramda.Path(clusterMapping.URL, extractedClusters[0]).(string)
 	if !ok {
 		return nil, fmt.Errorf("cluster url not found")

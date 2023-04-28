@@ -1,4 +1,4 @@
-package googleplayscraper
+package gpp
 
 import (
 	"context"
