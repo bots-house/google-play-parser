@@ -5,7 +5,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/bots-house/google-play-parser/cmd/gpp/cli"
+	"bots-house/gpp/cli"
 )
 
 func main() {
