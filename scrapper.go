@@ -16,7 +16,7 @@ var _ Scrapper = &collector{}
 
 type CollectorOption func(*collector)
 
-func New(opts ...CollectorOption) *collector {
+func New(opts ...CollectorOption) Scrapper {
 	collector := &collector{
 		client: http.DefaultClient,
 	}

@@ -37,12 +37,12 @@ func App(ctx context.Context, client sh.HTTPClient, opts models.ApplicationSpec)
 		return models.App{}, fmt.Errorf("parse: %w", err)
 	}
 
-	app, ok := parser.Extract(parsed.Data, appDetailsMapping)
+	app, ok := parser.Extract(parsed.Data, &appDetailsMapping)
 	if !ok {
 		return models.App{}, fmt.Errorf("no app details found")
 	}
 
 	app.Developer = strings.Split(app.Developer, "id=")[1]
 
-	return app.Assign(models.App{AppID: opts.AppID, URL: requestURL}), nil
+	return app.Assign(&models.App{AppID: opts.AppID, URL: requestURL}), nil
 }

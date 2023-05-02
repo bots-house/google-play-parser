@@ -66,7 +66,7 @@ func Test_Merge(t *testing.T) {
 		Name: "Steve",
 	}
 
-	result := Assign(user1, user2)
+	result := Assign(&user1, &user2)
 
 	assert.Equal(t, user1.ID, result.ID)
 	assert.Equal(t, user2.Name, result.Name)

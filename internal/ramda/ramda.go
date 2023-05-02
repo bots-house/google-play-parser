@@ -13,9 +13,7 @@ func Map[R, T, U any](obj R, fn func(T) U) (out R) {
 
 	switch v.Type().Kind() {
 	case reflect.Array, reflect.Slice:
-		len := v.Len()
-
-		for i := 0; i < len; i++ {
+		for i := 0; i < v.Len(); i++ {
 			value, ok := v.Index(i).Interface().(T)
 			if !ok {
 				continue
@@ -48,4 +46,3 @@ func Map[R, T, U any](obj R, fn func(T) U) (out R) {
 
 	return outValue.Interface().(R)
 }
-

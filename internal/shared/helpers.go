@@ -38,12 +38,12 @@ func Filter[V any, S ~[]V](slice S, filter func(V) bool) S {
 	return result
 }
 
-func Assign[T any](lhs, rhs T) T {
-	lhsR := reflect.ValueOf(lhs)
-	rhsR := reflect.ValueOf(rhs)
+func Assign[T any](lhs, rhs *T) T {
+	lhsR := reflect.Indirect(reflect.ValueOf(lhs))
+	rhsR := reflect.Indirect(reflect.ValueOf(rhs))
 
 	if lhsR.Type() != rhsR.Type() {
-		return lhs
+		return *lhs
 	}
 
 	result := reflect.Indirect(reflect.New(lhsR.Type()))
