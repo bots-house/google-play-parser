@@ -1,9 +1,8 @@
 package gpp
 
 import (
-	"fmt"
-
 	"github.com/bots-house/google-play-parser/internal/shared"
+	"github.com/bots-house/google-play-parser/models"
 )
 
 type App struct {
@@ -54,7 +53,69 @@ type App struct {
 	Updated                  float64         `json:"updated,omitempty"`
 	Version                  string          `json:"version,omitempty"`
 	RecentChanges            string          `json:"recent_changes,omitempty"`
-	Comments                 []any           `json:"comments,omitempty"` // todo: no comments there
+	Comments                 []any           `json:"comments,omitempty"`
+}
+
+func newFromInternal(app *models.App) App {
+	return App{
+		AppID:                    app.AppID,
+		URL:                      app.URL,
+		Title:                    app.Title,
+		Description:              app.Description,
+		DescriptionText:          app.DescriptionText,
+		Summary:                  app.Summary,
+		Installs:                 app.Installs,
+		MinInstalls:              app.MinInstalls,
+		MaxInstalls:              app.MaxInstalls,
+		Currency:                 app.Currency,
+		Price:                    app.Price,
+		PriceText:                app.PriceText,
+		Free:                     app.Free,
+		Score:                    app.Score,
+		ScoreText:                app.ScoreText,
+		Ratings:                  app.Ratings,
+		Reviews:                  app.Reviews,
+		Histogram:                app.Histogram,
+		Available:                app.Available,
+		OffersIAP:                app.OffersIAP,
+		IAPRange:                 app.IAPRange,
+		AndroidVersion:           app.AndroidVersion,
+		AndroidVersionText:       app.AndroidVersionText,
+		Developer:                app.Developer,
+		DeveloperID:              app.DeveloperID,
+		DeveloperEmail:           app.DeveloperEmail,
+		DeveloperWebsite:         app.DeveloperWebsite,
+		DeveloperAddress:         app.DeveloperAddress,
+		Genre:                    app.Genre,
+		GenreID:                  app.GenreID,
+		FamilyGenre:              app.FamilyGenre,
+		FamilyGenreID:            app.FamilyGenreID,
+		Icon:                     app.Icon,
+		HeaderImage:              app.HeaderImage,
+		Screenshots:              app.Screenshots,
+		Video:                    app.Video,
+		VideoImage:               app.VideoImage,
+		PreviewVideo:             app.PreviewVideo,
+		ContentRating:            app.ContentRating,
+		PrivacyPolicy:            app.PrivacyPolicy,
+		ContentRatingDescription: app.ContentRatingDescription,
+		AdSupported:              app.AdSupported,
+		Released:                 app.Released,
+		Updated:                  app.Updated,
+		Version:                  app.Version,
+		RecentChanges:            app.RecentChanges,
+		Comments:                 app.Comments,
+	}
+}
+
+func newApps(apps ...models.App) []App {
+	result := make([]App, 0, len(apps))
+
+	for _, app := range apps {
+		result = append(result, newFromInternal(&app))
+	}
+
+	return result
 }
 
 func (app App) Assign(rhs App) App {
@@ -68,25 +129,11 @@ type ApplicationSpec struct {
 	Full    bool
 }
 
-var defaultSimilarOpts = ApplicationSpec{
-	Lang:    "en",
-	Country: "us",
-}
-
-func (opts *ApplicationSpec) EnsureNotNil() {
-	if opts.Lang == "" {
-		opts.Lang = defaultSimilarOpts.Lang
+func (spec ApplicationSpec) toInternal() models.ApplicationSpec {
+	return models.ApplicationSpec{
+		AppID:   spec.AppID,
+		Country: spec.Country,
+		Lang:    spec.Lang,
+		Full:    spec.Full,
 	}
-
-	if opts.Country == "" {
-		opts.Country = defaultSimilarOpts.Country
-	}
-}
-
-func (opts ApplicationSpec) Validate() error {
-	if opts.AppID == "" {
-		return fmt.Errorf("appID required")
-	}
-
-	return nil
 }

@@ -3,11 +3,9 @@ package cli
 import (
 	"fmt"
 
+	gpp "github.com/bots-house/google-play-parser"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
-
-	googleplayscraper "github.com/bots-house/google-play-parser"
-	"github.com/bots-house/google-play-parser/models"
 )
 
 var similarCMD = &cli.Command{
@@ -19,13 +17,13 @@ var similarCMD = &cli.Command{
 		langFlag,
 	},
 	Action: func(ctx *cli.Context) error {
-		collector := googleplayscraper.New()
+		collector := gpp.New()
 
 		if !ctx.IsSet(appIDFlag.Name) {
 			return fmt.Errorf("app id not set")
 		}
 
-		result, err := collector.Similar(ctx.Context, models.ApplicationSpec{
+		result, err := collector.Similar(ctx.Context, gpp.ApplicationSpec{
 			AppID:   appIDFlag.Get(ctx),
 			Lang:    langFlag.Get(ctx),
 			Country: countryFlag.Get(ctx),

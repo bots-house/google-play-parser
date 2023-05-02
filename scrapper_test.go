@@ -7,11 +7,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/multierr"
-
-	"github.com/bots-house/google-play-parser/models"
 )
 
-func checkApp(app models.App) error {
+func checkApp(app App) error {
 	errs := make([]error, 0, 8)
 
 	if app.Title == "" {
@@ -55,7 +53,7 @@ func Test_Scraper(t *testing.T) {
 	t.Run("Similar", func(t *testing.T) {
 		apps, err := collector.Similar(
 			context.Background(),
-			models.ApplicationSpec{AppID: "com.mojang.minecraftpe"},
+			ApplicationSpec{AppID: "com.mojang.minecraftpe"},
 		)
 		if err != nil {
 			t.Fatal(err)
@@ -67,7 +65,7 @@ func Test_Scraper(t *testing.T) {
 	})
 
 	t.Run("App", func(t *testing.T) {
-		app, err := collector.App(context.Background(), models.ApplicationSpec{
+		app, err := collector.App(context.Background(), ApplicationSpec{
 			AppID: "com.mojang.minecraftpe",
 		})
 		if err != nil {

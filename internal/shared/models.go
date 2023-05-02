@@ -75,7 +75,7 @@ type Mapping struct {
 	Updated                  MappingWithFunc[float64, float64]
 	Version                  MappingWithFunc[string, string]
 	RecentChanges            []any
-	Comments                 []any
+	Comments                 []any // TODO: no comments by this path
 }
 
 type MappingWithFunc[I, O any] struct {
