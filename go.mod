@@ -16,3 +16,5 @@ require (
 	golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace bots-house/gpp => ./cmd/gpp

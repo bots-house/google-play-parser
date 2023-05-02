@@ -22,7 +22,7 @@ func Similar(ctx context.Context, client sh.HTTPClient, opts models.ApplicationS
 		return nil, fmt.Errorf("validation: %w", err)
 	}
 
-	body, err := request(ctx, client, requestSpec{
+	body, _, err := request(ctx, client, requestSpec{
 		url: getURL(appsDetailsURL),
 		params: &url.Values{
 			"id": []string{opts.AppID},
@@ -58,23 +58,12 @@ func parseSimilarApps(ctx context.Context, client sh.HTTPClient, parsed shared.P
 		return nil, fmt.Errorf("clusters not found")
 	}
 
-	extractedClusters = shared.Filter(extractedClusters, func(elem any) bool {
-		filter := ramda.Path(clusterMapping.Title, elem)
-
-		filterStr, ok := filter.(string)
-		if !ok {
-			return ok
-		}
-
-		return filterStr == "Similar apps" || filterStr == "Similar games"
-	})
-
 	clusterURL, ok := ramda.Path(clusterMapping.URL, extractedClusters[0]).(string)
 	if !ok {
 		return nil, fmt.Errorf("cluster url not found")
 	}
 
-	body, err := request(ctx, client, requestSpec{
+	body, _, err := request(ctx, client, requestSpec{
 		url: getURL(clusterURL),
 	})
 	if err != nil {
@@ -109,7 +98,7 @@ func processFirstPage(
 		URL: shared.MappingWithFunc[string, string]{
 			Path: []any{10, 4, 2},
 			Fun: func(u string) string {
-				result, err := url.Parse(u)
+				result, err := url.Parse(getURL(u))
 				if err != nil {
 					return ""
 				}

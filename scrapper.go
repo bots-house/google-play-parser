@@ -1,11 +1,10 @@
-package googleplayscraper
+package gpp
 
 import (
 	"context"
 	"net/http"
 
 	"github.com/bots-house/google-play-parser/internal/scraper"
-	"github.com/bots-house/google-play-parser/models"
 	"github.com/bots-house/google-play-parser/shared"
 )
 
@@ -35,10 +34,20 @@ func WithClient(client shared.HTTPClient) CollectorOption {
 	}
 }
 
-func (collector collector) Similar(ctx context.Context, opts models.ApplicationSpec) ([]models.App, error) {
-	return scraper.Similar(ctx, collector.client, opts)
+func (collector collector) Similar(ctx context.Context, opts ApplicationSpec) ([]App, error) {
+	apps, err := scraper.Similar(ctx, collector.client, opts.toInternal())
+	if err != nil {
+		return nil, err
+	}
+
+	return newApps(apps...), nil
 }
 
-func (collector collector) App(ctx context.Context, opts models.ApplicationSpec) (models.App, error) {
-	return scraper.App(ctx, collector.client, opts)
+func (collector collector) App(ctx context.Context, opts ApplicationSpec) (App, error) {
+	app, err := scraper.App(ctx, collector.client, opts.toInternal())
+	if err != nil {
+		return App{}, err
+	}
+
+	return newFromInternal(&app), nil
 }
