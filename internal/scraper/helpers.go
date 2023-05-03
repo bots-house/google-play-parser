@@ -35,14 +35,14 @@ func (spec requestSpec) validate() error {
 	return nil
 }
 
-func request(ctx context.Context, client shared.HTTPClient, spec requestSpec) ([]byte, string, error) {
+func request(ctx context.Context, client shared.HTTPClient, spec requestSpec) (body []byte, rawURL string, err error) {
 	spec.ensureNotNil()
 
 	if err := spec.validate(); err != nil {
 		return nil, "", err
 	}
 
-	request, err := http.NewRequestWithContext(ctx, spec.method, spec.url, nil)
+	request, err := http.NewRequestWithContext(ctx, spec.method, spec.url, http.NoBody)
 	if err != nil {
 		return nil, "", fmt.Errorf("prepare request: %w", err)
 	}
@@ -62,7 +62,7 @@ func request(ctx context.Context, client shared.HTTPClient, spec requestSpec) ([
 		return nil, "", fmt.Errorf("unexpected response: status: %s", response.Status)
 	}
 
-	body, err := io.ReadAll(response.Body)
+	body, err = io.ReadAll(response.Body)
 	if err != nil {
 		return nil, "", fmt.Errorf("read body: %w", err)
 	}

@@ -111,14 +111,15 @@ func newFromInternal(app *models.App) App {
 func newApps(apps ...models.App) []App {
 	result := make([]App, 0, len(apps))
 
-	for _, app := range apps {
+	for idx := range apps {
+		app := apps[idx]
 		result = append(result, newFromInternal(&app))
 	}
 
 	return result
 }
 
-func (app App) Assign(rhs App) App {
+func (app *App) Assign(rhs *App) App {
 	return shared.Assign(app, rhs)
 }
 

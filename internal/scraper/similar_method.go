@@ -47,7 +47,7 @@ func Similar(ctx context.Context, client sh.HTTPClient, opts models.ApplicationS
 }
 
 func parseSimilarApps(ctx context.Context, client sh.HTTPClient, parsed shared.ParsedObject, opts models.ApplicationSpec) ([]models.App, error) {
-	extracted := parser.ExtractDataWithServiceRequestId(parsed, clusterSpec)
+	extracted := parser.ExtractDataWithServiceRequestID(parsed, clusterSpec)
 
 	extractedClusters, ok := extracted.([]any)
 	if !ok {
@@ -75,7 +75,7 @@ func parseSimilarApps(ctx context.Context, client sh.HTTPClient, parsed shared.P
 		return nil, fmt.Errorf("no similar apps founded")
 	}
 
-	apps, err := processFirstPage(*similar, opts, clusterMapping)
+	apps, err := processFirstPage(*similar, &clusterMapping)
 	if err != nil {
 		return nil, err
 	}
@@ -89,10 +89,9 @@ func parseSimilarApps(ctx context.Context, client sh.HTTPClient, parsed shared.P
 
 func processFirstPage(
 	parsed shared.ParsedObject,
-	opts models.ApplicationSpec,
-	mappings shared.ClusterMapping,
+	mappings *shared.ClusterMapping,
 ) ([]models.App, error) {
-	mapping := shared.Mapping{
+	mapping := &shared.Mapping{
 		Title: []any{3},
 		AppID: []any{0, 0},
 		URL: shared.MappingWithFunc[string, string]{
@@ -126,7 +125,7 @@ func processFirstPage(
 
 	rawAppsSlice, ok := rawApps.([]any)
 	if !ok {
-		return nil, fmt.Errorf("Apps not found")
+		return nil, fmt.Errorf("apps not found")
 	}
 
 	apps := produceRawApps(rawAppsSlice, mapping)
@@ -137,7 +136,7 @@ func processFirstPage(
 	return apps, nil
 }
 
-func produceRawApps(appsData []any, mapping shared.Mapping) []models.App {
+func produceRawApps(appsData []any, mapping *shared.Mapping) []models.App {
 	apps := make([]models.App, 0)
 
 	for _, appData := range appsData {
@@ -171,7 +170,7 @@ func processFullDetail(ctx context.Context, client sh.HTTPClient, apps ...models
 				return
 			}
 
-			apps[idx] = app.Assign(fullApp)
+			apps[idx] = app.Assign(&fullApp)
 		}(idx, app)
 
 	}

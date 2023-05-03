@@ -11,6 +11,8 @@ import (
 const (
 	baseURL        = "https://play.google.com"
 	appsDetailsURL = "/store/apps/details"
+
+	vary = "VARY"
 )
 
 type ParsedObject struct {
@@ -123,14 +125,14 @@ var appDetailsMapping = shared.Mapping{
 		Path: []any{"ds:5", 1, 2, 140, 1, 1, 0, 0, 1},
 		Fun: func(s string) string {
 			if s == "" {
-				return "VARY"
+				return vary
 			}
 
 			number := strings.Split(s, " ")[0]
 
 			_, err := strconv.ParseFloat(number, 64)
 			if err != nil {
-				return "VARY"
+				return vary
 			}
 
 			return number
@@ -205,7 +207,7 @@ var appDetailsMapping = shared.Mapping{
 		Path: []any{"ds:5", 1, 2, 140, 0, 0, 0},
 		Fun: func(s string) string {
 			if s == "" {
-				return "VARY"
+				return vary
 			}
 
 			return s

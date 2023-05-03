@@ -9,7 +9,7 @@ import (
 	"go.uber.org/multierr"
 )
 
-func checkApp(app App) error {
+func checkApp(app *App) error {
 	errs := make([]error, 0, 8)
 
 	if app.Title == "" {
@@ -60,7 +60,7 @@ func Test_Scraper(t *testing.T) {
 		}
 
 		for _, app := range apps {
-			assert.NoError(t, checkApp(app))
+			assert.NoError(t, checkApp(&app))
 		}
 	})
 
@@ -72,6 +72,6 @@ func Test_Scraper(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.NoError(t, checkApp(app))
+		assert.NoError(t, checkApp(&app))
 	})
 }

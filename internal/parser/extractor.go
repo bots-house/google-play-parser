@@ -10,7 +10,7 @@ import (
 	"github.com/bots-house/google-play-parser/models"
 )
 
-func ExtractDataWithServiceRequestId(parsed shared.ParsedObject, spec shared.ParsedSpec) any {
+func ExtractDataWithServiceRequestID(parsed shared.ParsedObject, spec shared.ParsedSpec) any {
 	serviceMapping := shared.Keys(parsed.ServiceData)
 
 	filteredMapping := shared.Filter(serviceMapping, func(key string) bool {
@@ -27,10 +27,10 @@ func ExtractDataWithServiceRequestId(parsed shared.ParsedObject, spec shared.Par
 	return ramda.Path(path, parsed.Data)
 }
 
-func Extract(rawApp any, mapping shared.Mapping) (models.App, bool) {
+func Extract(rawApp any, mapping *shared.Mapping) (models.App, bool) {
 	app := reflect.Indirect(reflect.ValueOf(&models.App{}))
 
-	reflectMapping := reflect.ValueOf(mapping)
+	reflectMapping := reflect.Indirect(reflect.ValueOf(mapping))
 	mappingFields := reflect.VisibleFields(reflectMapping.Type())
 
 	for _, field := range mappingFields {

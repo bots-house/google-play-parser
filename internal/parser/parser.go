@@ -10,20 +10,9 @@ import (
 )
 
 func Parse(data []byte) (*shared.ParsedObject, error) {
-	scriptPattern, err := regexp.Compile(`>AF_initDataCallback[\s\S]*?<\/script`)
-	if err != nil {
-		return nil, fmt.Errorf("script pattern compile: %w", err)
-	}
-
-	keyPattern, err := regexp.Compile(`'(?P<key>ds:.*?)'`)
-	if err != nil {
-		return nil, fmt.Errorf("key pattern compile: %w", err)
-	}
-
-	valuePattern, err := regexp.Compile(`data:(?P<value>[\s\S]*?), sideChannel: {}}\);<\/`)
-	if err != nil {
-		return nil, fmt.Errorf("value pattern compile: %w", err)
-	}
+	scriptPattern := regexp.MustCompile(`>AF_initDataCallback[\s\S]*?</script`)
+	keyPattern := regexp.MustCompile(`'(?P<key>ds:.*?)'`)
+	valuePattern := regexp.MustCompile(`data:(?P<value>[\s\S]*?), sideChannel: {}}\);</`)
 
 	if err := matches(data, scriptPattern, keyPattern, valuePattern); err != nil {
 		return nil, fmt.Errorf("matches: %w", err)
@@ -68,15 +57,8 @@ func parseScriptData(scriptData [][]byte, keyPattern, valuePattern *regexp.Regex
 }
 
 func parseServiceRequests(data []byte) (map[string]shared.Service, error) {
-	scriptPattern, err := regexp.Compile(`; var AF_dataServiceRequests[\s\S]*?; var AF_initDataChunkQueue`)
-	if err != nil {
-		return nil, fmt.Errorf("script pattern compile: %w", err)
-	}
-
-	valuePattern, err := regexp.Compile(`{'ds:[\s\S]*}}`)
-	if err != nil {
-		return nil, fmt.Errorf("value pattern compile: %w", err)
-	}
+	scriptPattern := regexp.MustCompile(`; var AF_dataServiceRequests[\s\S]*?; var AF_initDataChunkQueue`)
+	valuePattern := regexp.MustCompile(`{'ds:[\s\S]*}}`)
 
 	parsedData := make([]byte, 0, 1024)
 
@@ -94,12 +76,9 @@ func parseServiceRequests(data []byte) (map[string]shared.Service, error) {
 }
 
 func parseServiceData(data []byte) (map[string]shared.Service, error) {
-	pattern, err := regexp.Compile(
-		`('(?P<dsKey>ds:\d+)')\s?:\s?({((?P<idKey>id):('(?P<idValue>\w*)'))+[,\s]?((?P<extKey>ext):\s?(?P<extValue>[\w\d.]*)\s?)?,\s?((?P<requestKey>request):(?P<requestValue>[\[\]\w,."\\:\d]*)?)})`,
+	pattern := regexp.MustCompile(
+		`('(?P<dsKey>ds:\d+)')\s?:\s?({((?P<idKey>id):('(?P<idValue>\w*)'))+[,\s]?((?P<extKey>ext):\s?(?P<extValue>[\w.]*)\s?)?,\s?((?P<requestKey>request):(?P<requestValue>[\[\]\w,."\\:]*)?)})`,
 	)
-	if err != nil {
-		return nil, fmt.Errorf("value pattern compile: %w", err)
-	}
 
 	matches := pattern.FindAll(data, -1)
 

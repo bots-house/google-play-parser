@@ -57,7 +57,7 @@ type App struct {
 	Comments                 []any
 }
 
-func (app App) Assign(rhs App) App {
+func (app *App) Assign(rhs *App) App {
 	return shared.Assign(app, rhs)
 }
 
