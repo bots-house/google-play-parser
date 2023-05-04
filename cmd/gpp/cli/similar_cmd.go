@@ -15,6 +15,7 @@ var similarCMD = &cli.Command{
 		appIDFlag,
 		countryFlag,
 		langFlag,
+		fullFlag,
 	},
 	Action: func(ctx *cli.Context) error {
 		collector := gpp.New()
@@ -27,6 +28,7 @@ var similarCMD = &cli.Command{
 			AppID:   appIDFlag.Get(ctx),
 			Lang:    langFlag.Get(ctx),
 			Country: countryFlag.Get(ctx),
+			Full:    fullFlag.Get(ctx),
 		})
 		if err != nil {
 			return fmt.Errorf("similar method: %w", err)

@@ -8,6 +8,8 @@ func New() *cli.App {
 		Commands: []*cli.Command{
 			appCMD,
 			similarCMD,
+			listCMD,
+			developerCMD,
 		},
 	}
 }
