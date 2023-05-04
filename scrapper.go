@@ -60,3 +60,12 @@ func (collector collector) List(ctx context.Context, spec ListSpec) ([]App, erro
 
 	return newApps(apps...), nil
 }
+
+func (collector collector) Developer(ctx context.Context, spec DeveloperSpec) ([]App, error) {
+	apps, err := scraper.Developer(ctx, collector.client, spec.toInternal())
+	if err != nil {
+		return nil, err
+	}
+
+	return newApps(apps...), nil
+}

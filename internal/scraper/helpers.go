@@ -15,6 +15,15 @@ func getURL(path string) string {
 	return baseURL + path
 }
 
+func produceURL(path string) string {
+	u, err := url.Parse(getURL(path))
+	if err != nil {
+		return ""
+	}
+
+	return u.String()
+}
+
 type requestSpec struct {
 	method  string
 	url     string

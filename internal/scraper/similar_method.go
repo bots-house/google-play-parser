@@ -94,14 +94,7 @@ func processFirstPage(
 		AppID: []any{0, 0},
 		URL: shared.MappingWithFunc[string, string]{
 			Path: []any{10, 4, 2},
-			Fun: func(u string) string {
-				result, err := url.Parse(getURL(u))
-				if err != nil {
-					return ""
-				}
-
-				return result.String()
-			},
+			Fun:  produceURL,
 		},
 		Icon:      []any{1, 3, 2},
 		Developer: []any{14},

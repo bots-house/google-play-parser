@@ -58,8 +58,8 @@ func Test_Scraper(t *testing.T) {
 			context.Background(),
 			ApplicationSpec{AppID: "com.mojang.minecraftpe"},
 		)
-		if err != nil {
-			t.Fatal(err)
+		if !assert.NoError(t, err) {
+			return
 		}
 
 		for _, app := range apps {
@@ -71,8 +71,8 @@ func Test_Scraper(t *testing.T) {
 		app, err := collector.App(context.Background(), ApplicationSpec{
 			AppID: "com.mojang.minecraftpe",
 		})
-		if err != nil {
-			t.Fatal(err)
+		if !assert.NoError(t, err) {
+			return
 		}
 
 		assert.NoError(t, checkApp(&app))
@@ -136,6 +136,40 @@ func Test_Scraper(t *testing.T) {
 			t.Run(test.name, func(t *testing.T) {
 				apps, err := collector.List(context.Background(), test.spec)
 				test.assertion(apps, err, test.wantErr)
+			})
+		}
+	})
+
+	t.Run("Developer", func(t *testing.T) {
+		tests := []struct {
+			name string
+			spec DeveloperSpec
+		}{
+			{
+				name: "Developer name",
+				spec: DeveloperSpec{
+					DevID: "Jam City, Inc.",
+				},
+			},
+
+			{
+				name: "Developer id",
+				spec: DeveloperSpec{
+					DevID: "5700313618786177705",
+				},
+			},
+		}
+
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				apps, err := collector.Developer(context.Background(), test.spec)
+				if !assert.NoError(t, err) {
+					return
+				}
+
+				for _, app := range apps {
+					assert.NoError(t, checkApp(&app))
+				}
 			})
 		}
 	})

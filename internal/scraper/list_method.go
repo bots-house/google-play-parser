@@ -16,7 +16,7 @@ import (
 
 func List(ctx context.Context, client sh.HTTPClient, spec models.ListSpec) ([]models.App, error) {
 	if err := spec.Validate(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("validation: %w", err)
 	}
 
 	params := url.Values{
@@ -88,14 +88,7 @@ func parseCollectionApps(rawData []any) ([]models.App, error) {
 		AppID: []any{0, 0, 0},
 		URL: shared.MappingWithFunc[string, string]{
 			Path: []any{0, 10, 4, 2},
-			Fun: func(s string) string {
-				u, err := url.Parse(getURL(s))
-				if err != nil {
-					return ""
-				}
-
-				return u.String()
-			},
+			Fun:  produceURL,
 		},
 		Icon:      []any{0, 1, 3, 2},
 		Developer: []any{0, 14},

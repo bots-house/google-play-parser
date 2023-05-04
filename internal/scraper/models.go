@@ -11,6 +11,7 @@ import (
 const (
 	baseURL        = "https://play.google.com"
 	appsDetailsURL = "/store/apps/details"
+	storeURL       = "/store/apps"
 	listURL        = "/_/PlayStoreUi/data/batchexecute?rpcids=vyAe2&source-path=%2Fstore%2Fapps&f.sid=-4178618388443751758&bl=boq_playuiserver_20220612.08_p0&authuser=0&soc-app=121&soc-platform=1&soc-device=1&_reqid=82003&rt=c"
 
 	vary = "VARY"

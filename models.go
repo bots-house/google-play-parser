@@ -160,3 +160,19 @@ func (spec ListSpec) toInternal() models.ListSpec {
 		Full:       spec.Full,
 	}
 }
+
+type DeveloperSpec struct {
+	DevID   string
+	Lang    string
+	Country string
+	Full    bool
+}
+
+func (spec DeveloperSpec) toInternal() models.DeveloperSpec {
+	return models.DeveloperSpec{
+		DevID:   spec.DevID,
+		Lang:    spec.Lang,
+		Country: spec.Country,
+		Full:    spec.Full,
+	}
+}

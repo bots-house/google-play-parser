@@ -67,12 +67,8 @@ var (
 	}
 )
 
-const (
-	defaultListCount = 100
-)
-
 func GetDefaultListCount() int {
-	return defaultListCount
+	return 100
 }
 
 type ListSpec struct {
@@ -88,7 +84,7 @@ type ListSpec struct {
 func (spec *ListSpec) ensureNotNil() {
 	*spec = shared.Assign(
 		spec,
-		&ListSpec{Lang: "en", Country: "us", Category: listCategories[0], Collection: listCollections[0], Count: defaultListCount},
+		&ListSpec{Lang: "en", Country: "us", Category: listCategories[0], Collection: listCollections[0], Count: GetDefaultListCount()},
 	)
 }
 

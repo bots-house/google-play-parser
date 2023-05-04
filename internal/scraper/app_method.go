@@ -13,7 +13,7 @@ import (
 
 func App(ctx context.Context, client sh.HTTPClient, spec models.ApplicationSpec) (models.App, error) {
 	if err := spec.Validate(); err != nil {
-		return models.App{}, err
+		return models.App{}, fmt.Errorf("validation: %w", err)
 	}
 
 	appURL := getURL(appsDetailsURL)
