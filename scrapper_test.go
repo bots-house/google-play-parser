@@ -3,10 +3,13 @@ package gpp
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/multierr"
+
+	"github.com/bots-house/google-play-parser/models"
 )
 
 func checkApp(app *App) error {
@@ -73,5 +76,67 @@ func Test_Scraper(t *testing.T) {
 		}
 
 		assert.NoError(t, checkApp(&app))
+	})
+
+	t.Run("List", func(t *testing.T) {
+		count := rand.Intn(100)
+
+		tests := []struct {
+			name      string
+			spec      ListSpec
+			assertion func(apps []App, err error, wantErr bool)
+			wantErr   bool
+		}{
+			{
+				name: "Simple",
+				spec: ListSpec{Count: count},
+				assertion: func(apps []App, err error, wantErr bool) {
+					if err != nil && !wantErr {
+						assert.NoError(t, err)
+						return
+					}
+
+					assert.Equal(t, count, len(apps))
+
+					for _, app := range apps {
+						assert.NoError(t, checkApp(&app))
+					}
+				},
+			},
+
+			{
+				name: "WithoutCount",
+				spec: ListSpec{},
+				assertion: func(apps []App, err error, wantErr bool) {
+					if err != nil && !wantErr {
+						assert.NoError(t, err)
+						return
+					}
+
+					assert.Equal(t, models.GetDefaultListCount(), len(apps))
+
+					for _, app := range apps {
+						assert.NoError(t, checkApp(&app))
+					}
+				},
+			},
+
+			{
+				name: "InvalidSpec",
+				spec: ListSpec{Count: -1},
+				assertion: func(apps []App, err error, wantErr bool) {
+					assert.Error(t, err)
+					assert.True(t, wantErr)
+				},
+				wantErr: true,
+			},
+		}
+
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				apps, err := collector.List(context.Background(), test.spec)
+				test.assertion(apps, err, test.wantErr)
+			})
+		}
 	})
 }

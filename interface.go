@@ -5,6 +5,7 @@ import (
 )
 
 type Scrapper interface {
-	Similar(ctx context.Context, opts ApplicationSpec) ([]App, error)
-	App(ctx context.Context, opts ApplicationSpec) (App, error)
+	Similar(context.Context, ApplicationSpec) ([]App, error)
+	App(context.Context, ApplicationSpec) (App, error)
+	List(context.Context, ListSpec) ([]App, error)
 }

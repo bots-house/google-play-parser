@@ -34,8 +34,8 @@ func WithClient(client shared.HTTPClient) CollectorOption {
 	}
 }
 
-func (collector collector) Similar(ctx context.Context, opts ApplicationSpec) ([]App, error) {
-	apps, err := scraper.Similar(ctx, collector.client, opts.toInternal())
+func (collector collector) Similar(ctx context.Context, spec ApplicationSpec) ([]App, error) {
+	apps, err := scraper.Similar(ctx, collector.client, spec.toInternal())
 	if err != nil {
 		return nil, err
 	}
@@ -43,11 +43,20 @@ func (collector collector) Similar(ctx context.Context, opts ApplicationSpec) ([
 	return newApps(apps...), nil
 }
 
-func (collector collector) App(ctx context.Context, opts ApplicationSpec) (App, error) {
-	app, err := scraper.App(ctx, collector.client, opts.toInternal())
+func (collector collector) App(ctx context.Context, spec ApplicationSpec) (App, error) {
+	app, err := scraper.App(ctx, collector.client, spec.toInternal())
 	if err != nil {
 		return App{}, err
 	}
 
 	return newFromInternal(&app), nil
+}
+
+func (collector collector) List(ctx context.Context, spec ListSpec) ([]App, error) {
+	apps, err := scraper.List(ctx, collector.client, spec.toInternal())
+	if err != nil {
+		return nil, err
+	}
+
+	return newApps(apps...), nil
 }

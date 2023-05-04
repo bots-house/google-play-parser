@@ -11,10 +11,8 @@ import (
 	sh "github.com/bots-house/google-play-parser/shared"
 )
 
-func App(ctx context.Context, client sh.HTTPClient, opts models.ApplicationSpec) (models.App, error) {
-	opts.EnsureNotNil()
-
-	if err := opts.Validate(); err != nil {
+func App(ctx context.Context, client sh.HTTPClient, spec models.ApplicationSpec) (models.App, error) {
+	if err := spec.Validate(); err != nil {
 		return models.App{}, err
 	}
 
@@ -22,10 +20,10 @@ func App(ctx context.Context, client sh.HTTPClient, opts models.ApplicationSpec)
 
 	body, requestURL, err := request(ctx, client, requestSpec{
 		url: appURL,
-		params: &url.Values{
-			"id": []string{opts.AppID},
-			"gl": []string{opts.Country},
-			"hl": []string{opts.Lang},
+		params: url.Values{
+			"id": []string{spec.AppID},
+			"gl": []string{spec.Country},
+			"hl": []string{spec.Lang},
 		},
 	})
 	if err != nil {
@@ -44,5 +42,5 @@ func App(ctx context.Context, client sh.HTTPClient, opts models.ApplicationSpec)
 
 	app.Developer = strings.Split(app.Developer, "id=")[1]
 
-	return app.Assign(&models.App{AppID: opts.AppID, URL: requestURL}), nil
+	return app.Assign(&models.App{AppID: spec.AppID, URL: requestURL}), nil
 }

@@ -138,3 +138,25 @@ func (spec ApplicationSpec) toInternal() models.ApplicationSpec {
 		Full:    spec.Full,
 	}
 }
+
+type ListSpec struct {
+	Count      int
+	Age        string
+	Lang       string
+	Country    string
+	Category   string
+	Collection string
+	Full       bool
+}
+
+func (spec ListSpec) toInternal() models.ListSpec {
+	return models.ListSpec{
+		Count:      spec.Count,
+		Age:        spec.Age,
+		Lang:       spec.Lang,
+		Country:    spec.Country,
+		Category:   spec.Category,
+		Collection: spec.Collection,
+		Full:       spec.Full,
+	}
+}

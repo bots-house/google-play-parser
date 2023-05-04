@@ -16,9 +16,11 @@ func getURL(path string) string {
 }
 
 type requestSpec struct {
-	method string
-	url    string
-	params *url.Values
+	method  string
+	url     string
+	params  url.Values
+	headers http.Header
+	body    io.Reader
 }
 
 func (spec *requestSpec) ensureNotNil() {
@@ -42,9 +44,18 @@ func request(ctx context.Context, client shared.HTTPClient, spec requestSpec) (b
 		return nil, "", err
 	}
 
-	request, err := http.NewRequestWithContext(ctx, spec.method, spec.url, http.NoBody)
+	var requestBody io.Reader = http.NoBody
+	if spec.body != nil {
+		requestBody = spec.body
+	}
+
+	request, err := http.NewRequestWithContext(ctx, spec.method, spec.url, requestBody)
 	if err != nil {
 		return nil, "", fmt.Errorf("prepare request: %w", err)
+	}
+
+	if spec.headers != nil {
+		request.Header = spec.headers
 	}
 
 	if spec.params != nil {

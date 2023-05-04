@@ -67,3 +67,13 @@ func Assign[T any](lhs, rhs *T) T {
 
 	return result.Interface().(T)
 }
+
+func In[T comparable](entry T, items ...T) bool {
+	for _, item := range items {
+		if entry == item {
+			return true
+		}
+	}
+
+	return false
+}
