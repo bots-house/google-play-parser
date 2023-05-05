@@ -173,4 +173,19 @@ func Test_Scraper(t *testing.T) {
 			})
 		}
 	})
+
+	t.Run("Search", func(t *testing.T) {
+		apps, err := collector.Search(context.Background(), SearchSpec{Query: "netflix", Count: 1})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		for _, app := range apps {
+			assert.NoError(t, checkApp(&app))
+		}
+
+		// Check for main app
+		assert.Equal(t, "Netflix", apps[0].Title)
+		assert.Equal(t, "com.netflix.mediaclient", apps[0].AppID)
+	})
 }

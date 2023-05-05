@@ -10,6 +10,7 @@ func New() *cli.App {
 			similarCMD,
 			listCMD,
 			developerCMD,
+			searchCMD,
 		},
 	}
 }

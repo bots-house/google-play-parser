@@ -176,3 +176,5 @@ func (spec DeveloperSpec) toInternal() models.DeveloperSpec {
 		Full:    spec.Full,
 	}
 }
+
+type SearchSpec models.SearchSpec

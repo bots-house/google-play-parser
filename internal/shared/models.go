@@ -16,10 +16,11 @@ type ParsedSpec struct {
 }
 
 type ClusterMapping struct {
-	Title []any
-	URL   []any
-	Apps  []any
-	Token []any
+	Title    []any
+	URL      []any
+	Apps     []any
+	Token    []any
+	Sections []any
 }
 
 type ParsedClustersSpec struct {

@@ -49,3 +49,13 @@ var fullFlag = &cli.BoolFlag{
 	Name:  "full",
 	Usage: "if true parse full detail",
 }
+
+var queryFlag = &cli.StringFlag{
+	Name:    "query",
+	Aliases: []string{"q"},
+}
+
+var priceFlag = &cli.StringFlag{
+	Name:    "price",
+	Aliases: []string{"p"},
+}

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/bots-house/google-play-parser/internal/scraper"
+	"github.com/bots-house/google-play-parser/models"
 	"github.com/bots-house/google-play-parser/shared"
 )
 
@@ -63,6 +64,15 @@ func (collector collector) List(ctx context.Context, spec ListSpec) ([]App, erro
 
 func (collector collector) Developer(ctx context.Context, spec DeveloperSpec) ([]App, error) {
 	apps, err := scraper.Developer(ctx, collector.client, spec.toInternal())
+	if err != nil {
+		return nil, err
+	}
+
+	return newApps(apps...), nil
+}
+
+func (collector collector) Search(ctx context.Context, spec SearchSpec) ([]App, error) {
+	apps, err := scraper.Search(ctx, collector.client, models.SearchSpec(spec))
 	if err != nil {
 		return nil, err
 	}
