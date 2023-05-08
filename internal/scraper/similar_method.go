@@ -89,7 +89,7 @@ func processFirstPage(
 	parsed shared.ParsedObject,
 	mappings *shared.ClusterMapping,
 ) ([]models.App, error) {
-	mapping := &shared.Mapping{
+	mapping := &shared.AppMapping{
 		Title: []any{3},
 		AppID: []any{0, 0},
 		URL: shared.MappingWithFunc[string, string]{
@@ -127,11 +127,11 @@ func processFirstPage(
 	return apps, nil
 }
 
-func produceRawApps(appsData []any, mapping *shared.Mapping) []models.App {
+func produceRawApps(appsData []any, mapping *shared.AppMapping) []models.App {
 	apps := make([]models.App, 0)
 
 	for _, appData := range appsData {
-		app, ok := parser.Extract(appData, mapping)
+		app, ok := parser.Extract[models.App](appData, mapping)
 		if !ok {
 			log.Debug().Msg("app not found")
 			continue

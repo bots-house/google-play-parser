@@ -83,7 +83,7 @@ func List(ctx context.Context, client sh.HTTPClient, spec models.ListSpec) ([]mo
 }
 
 func parseCollectionApps(rawData []any) ([]models.App, error) {
-	mapping := &shared.Mapping{
+	mapping := &shared.AppMapping{
 		Title: []any{0, 3},
 		AppID: []any{0, 0, 0},
 		URL: shared.MappingWithFunc[string, string]{

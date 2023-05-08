@@ -85,7 +85,7 @@ func developerMappingPath(isNumber bool, paths ...any) []any {
 func parseDeveloperApps(parsed *shared.ParsedObject, isNumber bool) ([]models.App, error) {
 	clusterMapping := getDeveloperClusterMappings(isNumber)
 
-	mapping := &shared.Mapping{
+	mapping := &shared.AppMapping{
 		Title: developerMappingPath(isNumber, 0, 3),
 		AppID: developerMappingPath(isNumber, 0, 0, 0),
 		URL: shared.MappingWithFunc[string, string]{

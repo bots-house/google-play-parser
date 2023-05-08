@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -187,5 +188,21 @@ func Test_Scraper(t *testing.T) {
 		// Check for main app
 		assert.Equal(t, "Netflix", apps[0].Title)
 		assert.Equal(t, "com.netflix.mediaclient", apps[0].AppID)
+	})
+
+	t.Run("DataSafety", func(t *testing.T) {
+		result, err := collector.DataSafety(context.Background(), ApplicationSpec{
+			AppID: "com.sgn.pandapop.gp",
+		})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.NotEmpty(t, result.SharedData)
+		assert.NotEmpty(t, result.CollectedData)
+		assert.NotEmpty(t, result.SecurityPractice)
+
+		_, err = url.Parse(result.PrivacyPolicyURL)
+		assert.NoError(t, err)
 	})
 }

@@ -35,7 +35,7 @@ func App(ctx context.Context, client sh.HTTPClient, spec models.ApplicationSpec)
 		return models.App{}, fmt.Errorf("parse: %w", err)
 	}
 
-	app, ok := parser.Extract(parsed.Data, &appDetailsMapping)
+	app, ok := parser.Extract[models.App](parsed.Data, &appDetailsMapping)
 	if !ok {
 		return models.App{}, fmt.Errorf("no app details found")
 	}

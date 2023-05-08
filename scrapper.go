@@ -79,3 +79,12 @@ func (collector collector) Search(ctx context.Context, spec SearchSpec) ([]App, 
 
 	return newApps(apps...), nil
 }
+
+func (collector collector) DataSafety(ctx context.Context, spec ApplicationSpec) (DataSafety, error) {
+	dataSafety, err := scraper.DataSafety(ctx, collector.client, spec.toInternal())
+	if err != nil {
+		return DataSafety{}, err
+	}
+
+	return DataSafety(dataSafety), nil
+}

@@ -28,7 +28,7 @@ type ParsedClustersSpec struct {
 	UserServiceID string
 }
 
-type Mapping struct {
+type AppMapping struct {
 	AppID                    []any
 	URL                      MappingWithFunc[string, string]
 	Title                    []any
@@ -82,4 +82,15 @@ type Mapping struct {
 type MappingWithFunc[I, O any] struct {
 	Path []any
 	Fun  func(I) O
+}
+
+type DataSafetyMapping struct {
+	SharedData        MappingWithFunc[any, []map[string]any]
+	CollectedData     MappingWithFunc[any, []map[string]any]
+	SecurityPractices MappingWithFunc[any, []map[string]any]
+	PrivacyPolicyURL  []any
+}
+
+type Mapping interface {
+	*AppMapping | DataSafetyMapping
 }

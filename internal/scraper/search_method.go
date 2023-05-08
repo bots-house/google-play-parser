@@ -66,7 +66,7 @@ func Search(ctx context.Context, client sh.HTTPClient, spec models.SearchSpec) (
 }
 
 func processSearchResult(parsed *shared.ParsedObject, initialMapping shared.ClusterMapping) ([]models.App, error) {
-	mainAppMapping := &shared.Mapping{
+	mainAppMapping := &shared.AppMapping{
 		Title: []any{16, 2, 0, 0},
 		AppID: []any{16, 11, 0, 0},
 		URL: shared.MappingWithFunc[string, string]{
@@ -93,7 +93,7 @@ func processSearchResult(parsed *shared.ParsedObject, initialMapping shared.Clus
 		Score:     []any{16, 2, 51, 0, 1},
 	}
 
-	moreResultMapping := &shared.Mapping{
+	moreResultMapping := &shared.AppMapping{
 		Title: []any{0, 3},
 		AppID: []any{0, 0, 0},
 		URL: shared.MappingWithFunc[string, string]{
@@ -145,7 +145,7 @@ func processSearchResult(parsed *shared.ParsedObject, initialMapping shared.Clus
 		return apps, nil
 	}
 
-	mainApp, ok := parser.Extract(mainAppSection, mainAppMapping)
+	mainApp, ok := parser.Extract[models.App](mainAppSection, mainAppMapping)
 	if !ok {
 		log.Debug().Msg("main app data not found")
 		return apps, nil

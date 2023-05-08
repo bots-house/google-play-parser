@@ -6,6 +6,7 @@ import (
 
 	"github.com/bots-house/google-play-parser/internal/ramda"
 	"github.com/bots-house/google-play-parser/internal/shared"
+	"github.com/bots-house/google-play-parser/models"
 )
 
 const (
@@ -15,6 +16,7 @@ const (
 	searchURL      = "/store/search"
 	listURL        = "/_/PlayStoreUi/data/batchexecute?rpcids=vyAe2&source-path=%2Fstore%2Fapps&f.sid=-4178618388443751758&bl=boq_playuiserver_20220612.08_p0&authuser=0&soc-app=121&soc-platform=1&soc-device=1&_reqid=82003&rt=c"
 	appPagesURL    = "/_/PlayStoreUi/data/batchexecute"
+	datasafetyURL  = "/store/apps/datasafety"
 
 	vary = "VARY"
 
@@ -52,7 +54,7 @@ var clusterSpec = shared.ParsedSpec{
 	},
 }
 
-var appDetailsMapping = shared.Mapping{
+var appDetailsMapping = shared.AppMapping{
 	Title:     []any{"ds:5", 1, 2, 0, 0},
 	Summary:   []any{"ds:5", 1, 2, 73, 0, 1},
 	Score:     []any{"ds:5", 1, 2, 51, 0, 1},
@@ -227,4 +229,39 @@ var appDetailsMapping = shared.Mapping{
 	},
 	RecentChanges: []any{"ds:5", 1, 2, 144, 1, 1},
 	Comments:      []any{"ds:9", 0},
+}
+
+type dataSafety struct {
+	SharedData        []map[string]any
+	CollectedData     []map[string]any
+	PrivacyPolicyURL  string
+	SecurityPractices []map[string]any
+}
+
+func (data dataSafety) toModel() models.DataSafety {
+	return models.DataSafety{
+		SharedData: shared.Map(data.SharedData, func(entry map[string]any) models.DataSafetyData {
+			return models.DataSafetyData{
+				Data:     safeMapIndex[string](entry, "data"),
+				Optional: safeMapIndex[bool](entry, "optional"),
+				Purpose:  safeMapIndex[string](entry, "purpose"),
+				Type:     safeMapIndex[string](entry, "type"),
+			}
+		}),
+		CollectedData: shared.Map(data.CollectedData, func(entry map[string]any) models.DataSafetyData {
+			return models.DataSafetyData{
+				Data:     safeMapIndex[string](entry, "data"),
+				Optional: safeMapIndex[bool](entry, "optional"),
+				Purpose:  safeMapIndex[string](entry, "purpose"),
+				Type:     safeMapIndex[string](entry, "type"),
+			}
+		}),
+		PrivacyPolicyURL: data.PrivacyPolicyURL,
+		SecurityPractice: shared.Map(data.SecurityPractices, func(entry map[string]any) models.DataSafetyPractice {
+			return models.DataSafetyPractice{
+				Practice:    safeMapIndex[string](entry, "practice"),
+				Description: safeMapIndex[string](entry, "description"),
+			}
+		}),
+	}
 }

@@ -178,3 +178,5 @@ func (spec DeveloperSpec) toInternal() models.DeveloperSpec {
 }
 
 type SearchSpec models.SearchSpec
+
+type DataSafety models.DataSafety
