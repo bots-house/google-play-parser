@@ -11,6 +11,5 @@ type Scrapper interface {
 	Developer(context.Context, DeveloperSpec) ([]App, error)
 	Search(context.Context, SearchSpec) ([]App, error)
 	DataSafety(context.Context, ApplicationSpec) (DataSafety, error)
+	Permissions(context.Context, ApplicationSpec) ([]Permission, error)
 }
-
-// TODO: add proces over pages for methods

@@ -207,4 +207,16 @@ func Test_Scraper(t *testing.T) {
 		_, err = url.Parse(result.PrivacyPolicyURL)
 		assert.NoError(t, err)
 	})
+
+	t.Run("Permissions", func(t *testing.T) {
+		perms, err := collector.Permissions(context.Background(), ApplicationSpec{
+			AppID: "com.sgn.pandapop.gp",
+			Full:  true,
+		})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Len(t, perms, 14)
+	})
 }

@@ -48,6 +48,31 @@ func Map[T, U any, S ~[]T](s S, fn func(T) U) []U {
 	return result
 }
 
+func Chain[T, U any, S ~[]T](s S, fn func(T) []U) []U {
+	result := make([]U, 0, len(s))
+
+	for _, v := range s {
+		result = append(result, fn(v)...)
+	}
+
+	return result
+}
+
+func MapCheck[T, U any, S ~[]T](s S, fn func(T) (U, bool)) []U {
+	result := make([]U, 0, len(s))
+
+	for _, v := range s {
+		value, ok := fn(v)
+		if !ok {
+			continue
+		}
+
+		result = append(result, value)
+	}
+
+	return result
+}
+
 func Assign[T any](lhs, rhs *T) T {
 	lhsR := reflect.Indirect(reflect.ValueOf(lhs))
 	rhsR := reflect.Indirect(reflect.ValueOf(rhs))

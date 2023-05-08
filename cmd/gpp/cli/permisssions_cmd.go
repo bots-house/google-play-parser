@@ -7,11 +7,11 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var dataSafetyCMD = &cli.Command{
-	Name: "data-safety",
+var permissionsCMD = &cli.Command{
+	Name:    "permissions",
+	Aliases: []string{"perm"},
 	Flags: []cli.Flag{
 		appIDFlag,
-		countryFlag,
 		langFlag,
 		fullFlag,
 	},
@@ -22,12 +22,13 @@ var dataSafetyCMD = &cli.Command{
 			return fmt.Errorf("app id not set")
 		}
 
-		result, err := collector.DataSafety(ctx.Context, gpp.ApplicationSpec{
+		result, err := collector.Permissions(ctx.Context, gpp.ApplicationSpec{
 			AppID: appIDFlag.Get(ctx),
 			Lang:  langFlag.Get(ctx),
+			Full:  fullFlag.Get(ctx),
 		})
 		if err != nil {
-			return fmt.Errorf("data_safety method: %w", err)
+			return fmt.Errorf("permissions method: %w", err)
 		}
 
 		return display(ctx, result)

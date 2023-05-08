@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	"github.com/bots-house/google-play-parser/internal/scraper"
+	"github.com/bots-house/google-play-parser/internal/shared"
 	"github.com/bots-house/google-play-parser/models"
-	"github.com/bots-house/google-play-parser/shared"
+	sh "github.com/bots-house/google-play-parser/shared"
 )
 
 type collector struct {
-	client shared.HTTPClient
+	client sh.HTTPClient
 }
 
 var _ Scrapper = &collector{}
@@ -29,7 +30,7 @@ func New(opts ...CollectorOption) Scrapper {
 	return collector
 }
 
-func WithClient(client shared.HTTPClient) CollectorOption {
+func WithClient(client sh.HTTPClient) CollectorOption {
 	return func(c *collector) {
 		c.client = client
 	}
@@ -87,4 +88,15 @@ func (collector collector) DataSafety(ctx context.Context, spec ApplicationSpec)
 	}
 
 	return DataSafety(dataSafety), nil
+}
+
+func (collector collector) Permissions(ctx context.Context, spec ApplicationSpec) ([]Permission, error) {
+	perms, err := scraper.Permissions(ctx, collector.client, spec.toInternal())
+	if err != nil {
+		return nil, err
+	}
+
+	return shared.Map(perms, func(perm models.Permission) Permission {
+		return Permission(perm)
+	}), nil
 }

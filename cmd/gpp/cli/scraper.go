@@ -12,6 +12,7 @@ func New() *cli.App {
 			developerCMD,
 			searchCMD,
 			dataSafetyCMD,
+			permissionsCMD,
 		},
 	}
 }
