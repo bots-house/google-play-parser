@@ -10,6 +10,7 @@ type DeveloperSpec struct {
 	DevID   string
 	Lang    string
 	Country string
+	Count   int
 	Full    bool
 }
 

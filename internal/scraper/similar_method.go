@@ -78,6 +78,15 @@ func parseSimilarApps(ctx context.Context, client sh.HTTPClient, parsed shared.P
 		return nil, err
 	}
 
+	token, ok := ramda.Path(clusterMapping.Token, similar.Data).(string)
+	if ok {
+		apps = processPages(ctx, client, pagesSpec{
+			apps:  apps,
+			token: token,
+			count: spec.Count,
+		})
+	}
+
 	if !spec.Full {
 		return apps, nil
 	}

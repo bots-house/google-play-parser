@@ -65,6 +65,7 @@ type ApplicationSpec struct {
 	AppID   string
 	Lang    string
 	Country string
+	Count   int
 	Full    bool
 }
 
@@ -92,4 +93,3 @@ func (spec *ApplicationSpec) Validate() error {
 
 	return nil
 }
-

@@ -181,6 +181,8 @@ func Test_Scraper(t *testing.T) {
 			return
 		}
 
+		assert.Len(t, apps, 1)
+
 		for _, app := range apps {
 			assert.NoError(t, checkApp(&app))
 		}

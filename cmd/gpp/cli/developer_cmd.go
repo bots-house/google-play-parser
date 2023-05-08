@@ -13,6 +13,7 @@ var developerCMD = &cli.Command{
 	Flags: []cli.Flag{
 		devIDFlag,
 		countryFlag,
+		countFlag,
 		langFlag,
 		fullFlag,
 	},
@@ -27,6 +28,7 @@ var developerCMD = &cli.Command{
 			DevID:   devIDFlag.Get(ctx),
 			Lang:    langFlag.Get(ctx),
 			Country: countryFlag.Get(ctx),
+			Count:   countFlag.Get(ctx),
 			Full:    fullFlag.Get(ctx),
 		})
 		if err != nil {

@@ -37,10 +37,16 @@ func Developer(ctx context.Context, client sh.HTTPClient, spec models.DeveloperS
 		return nil, fmt.Errorf("parse developer data: %w", err)
 	}
 
-	apps, err := parseDeveloperApps(parsed, isNumber)
+	apps, token, err := parseDeveloperApps(parsed, isNumber)
 	if err != nil {
 		return nil, fmt.Errorf("developer apps not found: %w", err)
 	}
+
+	apps = processPages(ctx, client, pagesSpec{
+		token: token,
+		apps:  apps,
+		count: spec.Count,
+	})
 
 	if !spec.Full {
 		return apps, nil
@@ -82,7 +88,7 @@ func developerMappingPath(isNumber bool, paths ...any) []any {
 	return paths
 }
 
-func parseDeveloperApps(parsed *shared.ParsedObject, isNumber bool) ([]models.App, error) {
+func parseDeveloperApps(parsed *shared.ParsedObject, isNumber bool) ([]models.App, string, error) {
 	clusterMapping := getDeveloperClusterMappings(isNumber)
 
 	mapping := &shared.AppMapping{
@@ -110,13 +116,15 @@ func parseDeveloperApps(parsed *shared.ParsedObject, isNumber bool) ([]models.Ap
 
 	rawApps, ok := ramda.Path(clusterMapping.Apps, parsed.Data).([]any)
 	if !ok {
-		return nil, fmt.Errorf("apps not found")
+		return nil, "", fmt.Errorf("apps not found")
 	}
 
 	apps := produceRawApps(rawApps, mapping)
 	if len(apps) == 0 {
-		return nil, fmt.Errorf("parse app failed")
+		return nil, "", fmt.Errorf("parse app failed")
 	}
 
-	return apps, nil
+	token, _ := ramda.Path(clusterMapping.Token, parsed.Data).(string)
+
+	return apps, token, nil
 }

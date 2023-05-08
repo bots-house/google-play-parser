@@ -127,6 +127,7 @@ type ApplicationSpec struct {
 	AppID   string
 	Lang    string
 	Country string
+	Count   int
 	Full    bool
 }
 
@@ -135,6 +136,7 @@ func (spec ApplicationSpec) toInternal() models.ApplicationSpec {
 		AppID:   spec.AppID,
 		Country: spec.Country,
 		Lang:    spec.Lang,
+		Count:   spec.Count,
 		Full:    spec.Full,
 	}
 }
@@ -165,6 +167,7 @@ type DeveloperSpec struct {
 	DevID   string
 	Lang    string
 	Country string
+	Count   int
 	Full    bool
 }
 
@@ -173,6 +176,7 @@ func (spec DeveloperSpec) toInternal() models.DeveloperSpec {
 		DevID:   spec.DevID,
 		Lang:    spec.Lang,
 		Country: spec.Country,
+		Count:   spec.Count,
 		Full:    spec.Full,
 	}
 }

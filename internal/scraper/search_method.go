@@ -50,13 +50,19 @@ func Search(ctx context.Context, client sh.HTTPClient, spec models.SearchSpec) (
 		return nil, err
 	}
 
-	apps, err := processSearchResult(parsed, shared.ClusterMapping{
+	apps, token, err := processSearchResult(parsed, shared.ClusterMapping{
 		Apps:     []any{"ds:4", 0, 1, 0, 23},
 		Sections: []any{"ds:4", 0, 1},
 	})
 	if err != nil {
 		return nil, err
 	}
+
+	apps = processPages(ctx, client, pagesSpec{
+		apps:  apps,
+		token: token,
+		count: spec.Count,
+	})
 
 	if !spec.Full {
 		return apps, nil
@@ -65,7 +71,7 @@ func Search(ctx context.Context, client sh.HTTPClient, spec models.SearchSpec) (
 	return processFullDetail(ctx, client, apps...), nil
 }
 
-func processSearchResult(parsed *shared.ParsedObject, initialMapping shared.ClusterMapping) ([]models.App, error) {
+func processSearchResult(parsed *shared.ParsedObject, initialMapping shared.ClusterMapping) ([]models.App, string, error) {
 	mainAppMapping := &shared.AppMapping{
 		Title: []any{16, 2, 0, 0},
 		AppID: []any{16, 11, 0, 0},
@@ -118,7 +124,7 @@ func processSearchResult(parsed *shared.ParsedObject, initialMapping shared.Clus
 
 	sections, ok := ramda.Path(initialMapping.Sections, parsed.Data).([]any)
 	if !ok {
-		return nil, fmt.Errorf("sections not found")
+		return nil, "", fmt.Errorf("sections not found")
 	}
 
 	moreSections := shared.Filter(sections, func(value any) bool {
@@ -127,29 +133,31 @@ func processSearchResult(parsed *shared.ParsedObject, initialMapping shared.Clus
 	})
 
 	if len(moreSections) == 0 {
-		return nil, fmt.Errorf("sections not found")
+		return nil, "", fmt.Errorf("sections not found")
 	}
 
 	rawApps, ok := ramda.Path([]any{22, 0}, moreSections[0]).([]any)
 	if !ok {
-		return nil, fmt.Errorf("apps data not found")
+		return nil, "", fmt.Errorf("apps data not found")
 	}
 
 	apps := produceRawApps(rawApps, moreResultMapping)
 	if len(apps) == 0 {
-		return nil, fmt.Errorf("apps not found")
+		return nil, "", fmt.Errorf("apps not found")
 	}
+
+	token, _ := ramda.Path([]any{22, 1, 3, 1}, moreSections[0]).(string)
 
 	mainAppSection, ok := ramda.Path(initialMapping.Apps, parsed.Data).([]any)
 	if !ok {
-		return apps, nil
+		return apps, token, nil
 	}
 
 	mainApp, ok := parser.Extract[models.App](mainAppSection, mainAppMapping)
 	if !ok {
 		log.Debug().Msg("main app data not found")
-		return apps, nil
+		return apps, token, nil
 	}
 
-	return append([]models.App{mainApp}, apps...), nil
+	return append([]models.App{mainApp}, apps...), token, nil
 }

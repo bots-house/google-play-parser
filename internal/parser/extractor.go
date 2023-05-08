@@ -76,6 +76,14 @@ func Extract[T any, M shared.Mapping](rawApp any, mapping M) (outValue T, ok boo
 		reflectResult := reflect.ValueOf(result)
 
 		if withFunc {
+			if fnType := fun.Type().In(0); fnType != reflectResult.Type() {
+				log.Debug().
+					Str("func_parameter", fnType.String()).
+					Str("argument", reflectResult.Type().String()).
+					Msg("can call fun with ")
+				continue
+			}
+
 			funResult := fun.Call([]reflect.Value{reflectResult})
 			reflectResult = funResult[0]
 		}

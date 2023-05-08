@@ -14,6 +14,7 @@ var similarCMD = &cli.Command{
 	Flags: []cli.Flag{
 		appIDFlag,
 		countryFlag,
+		countFlag,
 		langFlag,
 		fullFlag,
 	},
@@ -28,6 +29,7 @@ var similarCMD = &cli.Command{
 			AppID:   appIDFlag.Get(ctx),
 			Lang:    langFlag.Get(ctx),
 			Country: countryFlag.Get(ctx),
+			Count:   countFlag.Get(ctx),
 			Full:    fullFlag.Get(ctx),
 		})
 		if err != nil {
