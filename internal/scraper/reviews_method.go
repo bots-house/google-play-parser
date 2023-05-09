@@ -115,7 +115,7 @@ func parseReviewsResponse(
 		return nil, fmt.Errorf("reviews data not found")
 	}
 
-	mapping := shared.ReviewsMapping{
+	mapping := &shared.ReviewsMapping{
 		ID:        []any{0},
 		UserName:  []any{1, 0},
 		UserImage: []any{1, 1, 3, 2},
@@ -180,7 +180,7 @@ func parseReviewsResponse(
 	return produceReviewsRequest(ctx, client, reviews, spec)
 }
 
-func parseRawReviews(rawReviews []any, mapping shared.ReviewsMapping) []models.Review {
+func parseRawReviews(rawReviews []any, mapping *shared.ReviewsMapping) []models.Review {
 	result := make([]review, 0, len(rawReviews))
 
 	for _, entry := range rawReviews {

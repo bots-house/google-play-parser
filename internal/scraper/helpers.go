@@ -152,7 +152,7 @@ func safeMapIndex[O any](m map[string]any, key string) (out O) {
 func reviewsDate(dateArray []any) time.Time {
 	mills, ok := ramda.Path([]any{1}, dateArray).(float64)
 	if !ok {
-		mills = 000
+		mills = 0o00
 	}
 
 	millsStr := strconv.FormatFloat(mills, 'f', 0, strconv.IntSize)

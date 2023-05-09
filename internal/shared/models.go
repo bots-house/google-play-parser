@@ -112,5 +112,5 @@ type ReviewsMapping struct {
 }
 
 type Mapping interface {
-	*AppMapping | DataSafetyMapping | ReviewsMapping
+	*AppMapping | DataSafetyMapping | *ReviewsMapping
 }
