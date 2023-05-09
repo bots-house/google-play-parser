@@ -104,3 +104,12 @@ func (collector collector) Permissions(ctx context.Context, spec ApplicationSpec
 func (collector collector) Suggest(ctx context.Context, spec SearchSpec) ([]string, error) {
 	return scraper.Suggest(ctx, collector.client, models.SearchSpec(spec))
 }
+
+func (collector collector) Reviews(ctx context.Context, spec ReviewsSpec) ([]Review, error) {
+	reviews, err := scraper.Reviews(ctx, collector.client, spec.toInternal())
+	if err != nil {
+		return nil, err
+	}
+
+	return shared.Map(reviews, func(r models.Review) Review { return Review(r) }), nil
+}

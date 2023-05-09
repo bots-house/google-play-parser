@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
+	"time"
 
 	"github.com/bots-house/google-play-parser/internal/ramda"
 	"github.com/bots-house/google-play-parser/internal/shared"
@@ -145,4 +147,32 @@ func safeMapIndex[O any](m map[string]any, key string) (out O) {
 	}
 
 	return result
+}
+
+func reviewsDate(dateArray []any) time.Time {
+	mills, ok := ramda.Path([]any{1}, dateArray).(float64)
+	if !ok {
+		mills = 000
+	}
+
+	millsStr := strconv.FormatFloat(mills, 'f', 0, strconv.IntSize)
+
+	sec, ok := dateArray[0].(float64)
+	if !ok {
+		return time.Time{}
+	}
+
+	secStr := strconv.FormatFloat(sec, 'f', 0, strconv.IntSize)
+
+	secs, err := strconv.ParseInt(secStr, 10, strconv.IntSize)
+	if err != nil {
+		return time.Time{}
+	}
+
+	nsecs, err := strconv.ParseInt(millsStr, 10, strconv.IntSize)
+	if err != nil {
+		return time.Unix(secs, 0)
+	}
+
+	return time.Unix(secs, nsecs)
 }

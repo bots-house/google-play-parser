@@ -237,4 +237,18 @@ func Test_Scraper(t *testing.T) {
 			assert.True(t, ok)
 		}
 	})
+
+	t.Run("Reviews", func(t *testing.T) {
+		result, err := collector.Reviews(context.Background(), ReviewsSpec{AppID: "com.sgn.pandapop.gp", Count: 1})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Len(t, result, 1)
+
+		for _, review := range result {
+			assert.NotEmpty(t, review.ID)
+			assert.NotEmpty(t, review.URL)
+		}
+	})
 }

@@ -3,6 +3,7 @@ package scraper
 import (
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bots-house/google-play-parser/internal/ramda"
 	"github.com/bots-house/google-play-parser/internal/shared"
@@ -266,4 +267,21 @@ func (data dataSafety) toModel() models.DataSafety {
 			}
 		}),
 	}
+}
+
+type review struct {
+	ID        string
+	URL       string
+	Title     string
+	Summary   string
+	Score     float64
+	ScoreText string
+	UserImage string
+	UserName  string
+	Version   string
+	Date      time.Time
+	ReplyText string
+	ReplyDate time.Time
+	Criteria  map[string]float64
+	TumbsUp   float64
 }

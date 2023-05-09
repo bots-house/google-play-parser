@@ -59,3 +59,8 @@ var priceFlag = &cli.StringFlag{
 	Name:    "price",
 	Aliases: []string{"p"},
 }
+
+var sortFlag = &cli.StringFlag{
+	Name:  "sort",
+	Usage: "Possible values: [helpfulness, newest, rating]",
+}

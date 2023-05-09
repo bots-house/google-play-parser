@@ -186,3 +186,33 @@ type SearchSpec models.SearchSpec
 type DataSafety models.DataSafety
 
 type Permission models.Permission
+
+type ReviewsSpec struct {
+	AppID   string
+	Lang    string
+	Country string
+	Count   int
+	Sort    ReviewsSort
+}
+
+func (spec ReviewsSpec) toInternal() models.ReviewsSpec {
+	return models.ReviewsSpec{
+		AppID:   spec.AppID,
+		Country: spec.Country,
+		Lang:    spec.Lang,
+		Count:   spec.Count,
+		Sort:    spec.Sort.int(),
+	}
+}
+
+type ReviewsSort int
+
+func (sort ReviewsSort) int() int { return int(sort) }
+
+const (
+	ReviewsSortHelpfulness ReviewsSort = iota + 1
+	ReviewsSortNewest
+	ReviewsSortRating
+)
+
+type Review models.Review

@@ -14,6 +14,7 @@ func New() *cli.App {
 			dataSafetyCMD,
 			permissionsCMD,
 			suggestCMD,
+			reviewsCMD,
 		},
 	}
 }

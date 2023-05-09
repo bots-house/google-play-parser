@@ -1,5 +1,9 @@
 package shared
 
+import (
+	"time"
+)
+
 type ParsedObject struct {
 	Data        map[string][]any
 	ServiceData map[string]Service
@@ -91,6 +95,22 @@ type DataSafetyMapping struct {
 	PrivacyPolicyURL  []any
 }
 
+type ReviewsMapping struct {
+	ID        []any
+	UserName  []any
+	UserImage []any
+	Date      MappingWithFunc[[]any, time.Time]
+	Score     []any
+	ScoreText MappingWithFunc[float64, string]
+	URL       MappingWithFunc[string, string]
+	ReplyDate MappingWithFunc[[]any, time.Time]
+	Summary   []any
+	ReplyText []any
+	Version   []any
+	TumbsUp   []any
+	Criteria  MappingWithFunc[[]any, map[string]float64]
+}
+
 type Mapping interface {
-	*AppMapping | DataSafetyMapping
+	*AppMapping | DataSafetyMapping | ReviewsMapping
 }
