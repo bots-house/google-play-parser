@@ -12,4 +12,5 @@ type Scrapper interface {
 	Search(context.Context, SearchSpec) ([]App, error)
 	DataSafety(context.Context, ApplicationSpec) (DataSafety, error)
 	Permissions(context.Context, ApplicationSpec) ([]Permission, error)
+	Suggest(context.Context, SearchSpec) ([]string, error)
 }

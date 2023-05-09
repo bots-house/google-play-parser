@@ -100,3 +100,7 @@ func (collector collector) Permissions(ctx context.Context, spec ApplicationSpec
 		return Permission(perm)
 	}), nil
 }
+
+func (collector collector) Suggest(ctx context.Context, spec SearchSpec) ([]string, error) {
+	return scraper.Suggest(ctx, collector.client, models.SearchSpec(spec))
+}

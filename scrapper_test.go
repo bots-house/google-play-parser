@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"math/rand"
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/multierr"
 
+	"github.com/bots-house/google-play-parser/internal/shared"
 	"github.com/bots-house/google-play-parser/models"
 )
 
@@ -218,5 +220,21 @@ func Test_Scraper(t *testing.T) {
 		}
 
 		assert.Len(t, perms, 14)
+	})
+
+	t.Run("Suggest", func(t *testing.T) {
+		result, err := collector.Suggest(context.Background(), SearchSpec{Query: "p"})
+
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Len(t, result, 5)
+
+		for _, ok := range shared.Map(result, func(val string) bool {
+			return strings.HasPrefix(val, "p")
+		}) {
+			assert.True(t, ok)
+		}
 	})
 }
