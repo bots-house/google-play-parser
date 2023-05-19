@@ -7,29 +7,27 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var appCMD = &cli.Command{
-	Name: "app",
+var suggestCMD = &cli.Command{
+	Name: "suggest",
 	Flags: []cli.Flag{
-		appIDFlag,
+		queryFlag,
 		countryFlag,
 		langFlag,
-		fullFlag,
 	},
 	Action: func(ctx *cli.Context) error {
 		collector := gpp.New()
 
-		if !ctx.IsSet(appIDFlag.Name) {
-			return fmt.Errorf("app id not set")
+		if !ctx.IsSet(queryFlag.Name) {
+			return fmt.Errorf("query not set")
 		}
 
-		result, err := collector.App(ctx.Context, gpp.ApplicationSpec{
-			AppID:   appIDFlag.Get(ctx),
+		result, err := collector.Suggest(ctx.Context, gpp.SearchSpec{
+			Query:   queryFlag.Get(ctx),
 			Lang:    langFlag.Get(ctx),
 			Country: countryFlag.Get(ctx),
-			Full:    fullFlag.Get(ctx),
 		})
 		if err != nil {
-			return fmt.Errorf("app method: %w", err)
+			return fmt.Errorf("suggest method: %w", err)
 		}
 
 		return display(ctx, result)

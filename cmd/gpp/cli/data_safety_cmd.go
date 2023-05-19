@@ -7,8 +7,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var appCMD = &cli.Command{
-	Name: "app",
+var dataSafetyCMD = &cli.Command{
+	Name: "data-safety",
 	Flags: []cli.Flag{
 		appIDFlag,
 		countryFlag,
@@ -22,14 +22,12 @@ var appCMD = &cli.Command{
 			return fmt.Errorf("app id not set")
 		}
 
-		result, err := collector.App(ctx.Context, gpp.ApplicationSpec{
-			AppID:   appIDFlag.Get(ctx),
-			Lang:    langFlag.Get(ctx),
-			Country: countryFlag.Get(ctx),
-			Full:    fullFlag.Get(ctx),
+		result, err := collector.DataSafety(ctx.Context, gpp.ApplicationSpec{
+			AppID: appIDFlag.Get(ctx),
+			Lang:  langFlag.Get(ctx),
 		})
 		if err != nil {
-			return fmt.Errorf("app method: %w", err)
+			return fmt.Errorf("data_safety method: %w", err)
 		}
 
 		return display(ctx, result)

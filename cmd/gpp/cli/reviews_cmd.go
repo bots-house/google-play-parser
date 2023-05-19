@@ -2,21 +2,20 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 
 	gpp "github.com/bots-house/google-play-parser"
-	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 )
 
-var similarCMD = &cli.Command{
-	Name:    "similar",
-	Aliases: []string{"s"},
+var reviewsCMD = &cli.Command{
+	Name: "reviews",
 	Flags: []cli.Flag{
 		appIDFlag,
 		countryFlag,
-		countFlag,
 		langFlag,
-		fullFlag,
+		countFlag,
+		sortFlag,
 	},
 	Action: func(ctx *cli.Context) error {
 		collector := gpp.New()
@@ -25,19 +24,30 @@ var similarCMD = &cli.Command{
 			return fmt.Errorf("app id not set")
 		}
 
-		result, err := collector.Similar(ctx.Context, gpp.ApplicationSpec{
+		result, err := collector.Reviews(ctx.Context, gpp.ReviewsSpec{
 			AppID:   appIDFlag.Get(ctx),
 			Lang:    langFlag.Get(ctx),
 			Country: countryFlag.Get(ctx),
 			Count:   countFlag.Get(ctx),
-			Full:    fullFlag.Get(ctx),
+			Sort:    parseSortFlag(sortFlag.Get(ctx)),
 		})
 		if err != nil {
-			return fmt.Errorf("similar method: %w", err)
+			return fmt.Errorf("app method: %w", err)
 		}
-
-		log.Ctx(ctx.Context).Debug().Msgf("similar apps founded: %d", len(result))
 
 		return display(ctx, result)
 	},
+}
+
+func parseSortFlag(sort string) gpp.ReviewsSort {
+	switch strings.ToLower(sort) {
+	case "helpfulness":
+		return 1
+	case "newest", "":
+		return 2
+	case "rating":
+		return 3
+	default:
+		return -1
+	}
 }

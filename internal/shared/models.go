@@ -1,5 +1,9 @@
 package shared
 
+import (
+	"time"
+)
+
 type ParsedObject struct {
 	Data        map[string][]any
 	ServiceData map[string]Service
@@ -16,10 +20,11 @@ type ParsedSpec struct {
 }
 
 type ClusterMapping struct {
-	Title []any
-	URL   []any
-	Apps  []any
-	Token []any
+	Title    []any
+	URL      []any
+	Apps     []any
+	Token    []any
+	Sections []any
 }
 
 type ParsedClustersSpec struct {
@@ -27,7 +32,7 @@ type ParsedClustersSpec struct {
 	UserServiceID string
 }
 
-type Mapping struct {
+type AppMapping struct {
 	AppID                    []any
 	URL                      MappingWithFunc[string, string]
 	Title                    []any
@@ -81,4 +86,31 @@ type Mapping struct {
 type MappingWithFunc[I, O any] struct {
 	Path []any
 	Fun  func(I) O
+}
+
+type DataSafetyMapping struct {
+	SharedData        MappingWithFunc[any, []map[string]any]
+	CollectedData     MappingWithFunc[any, []map[string]any]
+	SecurityPractices MappingWithFunc[any, []map[string]any]
+	PrivacyPolicyURL  []any
+}
+
+type ReviewsMapping struct {
+	ID        []any
+	UserName  []any
+	UserImage []any
+	Date      MappingWithFunc[[]any, time.Time]
+	Score     []any
+	ScoreText MappingWithFunc[float64, string]
+	URL       MappingWithFunc[string, string]
+	ReplyDate MappingWithFunc[[]any, time.Time]
+	Summary   []any
+	ReplyText []any
+	Version   []any
+	TumbsUp   []any
+	Criteria  MappingWithFunc[[]any, map[string]float64]
+}
+
+type Mapping interface {
+	*AppMapping | DataSafetyMapping | *ReviewsMapping
 }

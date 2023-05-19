@@ -127,6 +127,7 @@ type ApplicationSpec struct {
 	AppID   string
 	Lang    string
 	Country string
+	Count   int
 	Full    bool
 }
 
@@ -135,6 +136,83 @@ func (spec ApplicationSpec) toInternal() models.ApplicationSpec {
 		AppID:   spec.AppID,
 		Country: spec.Country,
 		Lang:    spec.Lang,
+		Count:   spec.Count,
 		Full:    spec.Full,
 	}
 }
+
+type ListSpec struct {
+	Count      int
+	Age        string
+	Lang       string
+	Country    string
+	Category   string
+	Collection string
+	Full       bool
+}
+
+func (spec ListSpec) toInternal() models.ListSpec {
+	return models.ListSpec{
+		Count:      spec.Count,
+		Age:        spec.Age,
+		Lang:       spec.Lang,
+		Country:    spec.Country,
+		Category:   spec.Category,
+		Collection: spec.Collection,
+		Full:       spec.Full,
+	}
+}
+
+type DeveloperSpec struct {
+	DevID   string
+	Lang    string
+	Country string
+	Count   int
+	Full    bool
+}
+
+func (spec DeveloperSpec) toInternal() models.DeveloperSpec {
+	return models.DeveloperSpec{
+		DevID:   spec.DevID,
+		Lang:    spec.Lang,
+		Country: spec.Country,
+		Count:   spec.Count,
+		Full:    spec.Full,
+	}
+}
+
+type SearchSpec models.SearchSpec
+
+type DataSafety models.DataSafety
+
+type Permission models.Permission
+
+type ReviewsSpec struct {
+	AppID   string
+	Lang    string
+	Country string
+	Count   int
+	Sort    ReviewsSort
+}
+
+func (spec ReviewsSpec) toInternal() models.ReviewsSpec {
+	return models.ReviewsSpec{
+		AppID:   spec.AppID,
+		Country: spec.Country,
+		Lang:    spec.Lang,
+		Count:   spec.Count,
+		Sort:    spec.Sort.int(),
+	}
+}
+
+type ReviewsSort int
+
+func (sort ReviewsSort) int() int { return int(sort) }
+
+const (
+	ReviewsSortHelpfulness ReviewsSort = iota + 1
+	ReviewsSortNewest
+	ReviewsSortRating
+)
+
+type Review models.Review

@@ -7,7 +7,6 @@ import (
 
 	"github.com/bots-house/google-play-parser/internal/ramda"
 	"github.com/bots-house/google-play-parser/internal/shared"
-	"github.com/bots-house/google-play-parser/models"
 )
 
 func ExtractDataWithServiceRequestID(parsed shared.ParsedObject, spec shared.ParsedSpec) any {
@@ -27,14 +26,14 @@ func ExtractDataWithServiceRequestID(parsed shared.ParsedObject, spec shared.Par
 	return ramda.Path(path, parsed.Data)
 }
 
-func Extract(rawApp any, mapping *shared.Mapping) (models.App, bool) {
-	app := reflect.Indirect(reflect.ValueOf(&models.App{}))
+func Extract[T any, M shared.Mapping](rawApp any, mapping M) (outValue T, ok bool) {
+	out := reflect.Indirect(reflect.ValueOf(&outValue))
 
 	reflectMapping := reflect.Indirect(reflect.ValueOf(mapping))
 	mappingFields := reflect.VisibleFields(reflectMapping.Type())
 
 	for _, field := range mappingFields {
-		appField := app.FieldByName(field.Name)
+		appField := out.FieldByName(field.Name)
 
 		if !appField.IsValid() {
 			continue
@@ -77,6 +76,14 @@ func Extract(rawApp any, mapping *shared.Mapping) (models.App, bool) {
 		reflectResult := reflect.ValueOf(result)
 
 		if withFunc {
+			if fnType := fun.Type().In(0); fnType != reflectResult.Type() && fnType.Kind() != reflect.Interface {
+				log.Debug().
+					Str("func_parameter", fnType.String()).
+					Str("argument", reflectResult.Type().String()).
+					Msg("can call fun with ")
+				continue
+			}
+
 			funResult := fun.Call([]reflect.Value{reflectResult})
 			reflectResult = funResult[0]
 		}
@@ -94,7 +101,7 @@ func Extract(rawApp any, mapping *shared.Mapping) (models.App, bool) {
 		appField.Set(reflectResult)
 	}
 
-	result, ok := app.Interface().(models.App)
+	result, ok := out.Interface().(T)
 
 	return result, ok
 }

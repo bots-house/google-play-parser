@@ -65,26 +65,29 @@ type ApplicationSpec struct {
 	AppID   string
 	Lang    string
 	Country string
+	Count   int
 	Full    bool
 }
 
-var defaultSimilarOpts = ApplicationSpec{
+var defaultSimilarSpec = ApplicationSpec{
 	Lang:    "en",
 	Country: "us",
 }
 
-func (opts *ApplicationSpec) EnsureNotNil() {
-	if opts.Lang == "" {
-		opts.Lang = defaultSimilarOpts.Lang
+func (spec *ApplicationSpec) ensureNotNil() {
+	if spec.Lang == "" {
+		spec.Lang = defaultSimilarSpec.Lang
 	}
 
-	if opts.Country == "" {
-		opts.Country = defaultSimilarOpts.Country
+	if spec.Country == "" {
+		spec.Country = defaultSimilarSpec.Country
 	}
 }
 
-func (opts ApplicationSpec) Validate() error {
-	if opts.AppID == "" {
+func (spec *ApplicationSpec) Validate() error {
+	spec.ensureNotNil()
+
+	if spec.AppID == "" {
 		return fmt.Errorf("appID required")
 	}
 

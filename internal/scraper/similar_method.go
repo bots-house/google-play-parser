@@ -15,18 +15,16 @@ import (
 	sh "github.com/bots-house/google-play-parser/shared"
 )
 
-func Similar(ctx context.Context, client sh.HTTPClient, opts models.ApplicationSpec) ([]models.App, error) {
-	opts.EnsureNotNil()
-
-	if err := opts.Validate(); err != nil {
+func Similar(ctx context.Context, client sh.HTTPClient, spec models.ApplicationSpec) ([]models.App, error) {
+	if err := spec.Validate(); err != nil {
 		return nil, fmt.Errorf("validation: %w", err)
 	}
 
 	body, _, err := request(ctx, client, requestSpec{
 		url: getURL(appsDetailsURL),
-		params: &url.Values{
-			"id": []string{opts.AppID},
-			"hl": []string{opts.Lang},
+		params: url.Values{
+			"id": []string{spec.AppID},
+			"hl": []string{spec.Lang},
 		},
 	})
 	if err != nil {
@@ -38,7 +36,7 @@ func Similar(ctx context.Context, client sh.HTTPClient, opts models.ApplicationS
 		return nil, fmt.Errorf("parse: %w", err)
 	}
 
-	similarApps, err := parseSimilarApps(ctx, client, *parsed, opts)
+	similarApps, err := parseSimilarApps(ctx, client, *parsed, spec)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +44,7 @@ func Similar(ctx context.Context, client sh.HTTPClient, opts models.ApplicationS
 	return similarApps, nil
 }
 
-func parseSimilarApps(ctx context.Context, client sh.HTTPClient, parsed shared.ParsedObject, opts models.ApplicationSpec) ([]models.App, error) {
+func parseSimilarApps(ctx context.Context, client sh.HTTPClient, parsed shared.ParsedObject, spec models.ApplicationSpec) ([]models.App, error) {
 	extracted := parser.ExtractDataWithServiceRequestID(parsed, clusterSpec)
 
 	extractedClusters, ok := extracted.([]any)
@@ -80,7 +78,16 @@ func parseSimilarApps(ctx context.Context, client sh.HTTPClient, parsed shared.P
 		return nil, err
 	}
 
-	if !opts.Full {
+	token, ok := ramda.Path(clusterMapping.Token, similar.Data).(string)
+	if ok {
+		apps = processPages(ctx, client, pagesSpec{
+			apps:  apps,
+			token: token,
+			count: spec.Count,
+		})
+	}
+
+	if !spec.Full {
 		return apps, nil
 	}
 
@@ -91,19 +98,12 @@ func processFirstPage(
 	parsed shared.ParsedObject,
 	mappings *shared.ClusterMapping,
 ) ([]models.App, error) {
-	mapping := &shared.Mapping{
+	mapping := &shared.AppMapping{
 		Title: []any{3},
 		AppID: []any{0, 0},
 		URL: shared.MappingWithFunc[string, string]{
 			Path: []any{10, 4, 2},
-			Fun: func(u string) string {
-				result, err := url.Parse(getURL(u))
-				if err != nil {
-					return ""
-				}
-
-				return result.String()
-			},
+			Fun:  produceURL,
 		},
 		Icon:      []any{1, 3, 2},
 		Developer: []any{14},
@@ -136,11 +136,11 @@ func processFirstPage(
 	return apps, nil
 }
 
-func produceRawApps(appsData []any, mapping *shared.Mapping) []models.App {
+func produceRawApps(appsData []any, mapping *shared.AppMapping) []models.App {
 	apps := make([]models.App, 0)
 
 	for _, appData := range appsData {
-		app, ok := parser.Extract(appData, mapping)
+		app, ok := parser.Extract[models.App](appData, mapping)
 		if !ok {
 			log.Debug().Msg("app not found")
 			continue

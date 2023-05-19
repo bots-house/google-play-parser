@@ -3,10 +3,16 @@ package gpp
 import (
 	"context"
 	"fmt"
+	"math/rand"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/multierr"
+
+	"github.com/bots-house/google-play-parser/internal/shared"
+	"github.com/bots-house/google-play-parser/models"
 )
 
 func checkApp(app *App) error {
@@ -55,8 +61,8 @@ func Test_Scraper(t *testing.T) {
 			context.Background(),
 			ApplicationSpec{AppID: "com.mojang.minecraftpe"},
 		)
-		if err != nil {
-			t.Fatal(err)
+		if !assert.NoError(t, err) {
+			return
 		}
 
 		for _, app := range apps {
@@ -68,10 +74,181 @@ func Test_Scraper(t *testing.T) {
 		app, err := collector.App(context.Background(), ApplicationSpec{
 			AppID: "com.mojang.minecraftpe",
 		})
-		if err != nil {
-			t.Fatal(err)
+		if !assert.NoError(t, err) {
+			return
 		}
 
 		assert.NoError(t, checkApp(&app))
+	})
+
+	t.Run("List", func(t *testing.T) {
+		count := rand.Intn(100)
+
+		tests := []struct {
+			name      string
+			spec      ListSpec
+			assertion func(apps []App, err error, wantErr bool)
+			wantErr   bool
+		}{
+			{
+				name: "Simple",
+				spec: ListSpec{Count: count},
+				assertion: func(apps []App, err error, wantErr bool) {
+					if err != nil && !wantErr {
+						assert.NoError(t, err)
+						return
+					}
+
+					assert.Equal(t, count, len(apps))
+
+					for _, app := range apps {
+						assert.NoError(t, checkApp(&app))
+					}
+				},
+			},
+
+			{
+				name: "WithoutCount",
+				spec: ListSpec{},
+				assertion: func(apps []App, err error, wantErr bool) {
+					if err != nil && !wantErr {
+						assert.NoError(t, err)
+						return
+					}
+
+					assert.Equal(t, models.GetDefaultListCount(), len(apps))
+
+					for _, app := range apps {
+						assert.NoError(t, checkApp(&app))
+					}
+				},
+			},
+
+			{
+				name: "InvalidSpec",
+				spec: ListSpec{Count: -1},
+				assertion: func(apps []App, err error, wantErr bool) {
+					assert.Error(t, err)
+					assert.True(t, wantErr)
+				},
+				wantErr: true,
+			},
+		}
+
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				apps, err := collector.List(context.Background(), test.spec)
+				test.assertion(apps, err, test.wantErr)
+			})
+		}
+	})
+
+	t.Run("Developer", func(t *testing.T) {
+		tests := []struct {
+			name string
+			spec DeveloperSpec
+		}{
+			{
+				name: "Developer name",
+				spec: DeveloperSpec{
+					DevID: "Jam City, Inc.",
+				},
+			},
+
+			{
+				name: "Developer id",
+				spec: DeveloperSpec{
+					DevID: "5700313618786177705",
+				},
+			},
+		}
+
+		for _, test := range tests {
+			t.Run(test.name, func(t *testing.T) {
+				apps, err := collector.Developer(context.Background(), test.spec)
+				if !assert.NoError(t, err) {
+					return
+				}
+
+				for _, app := range apps {
+					assert.NoError(t, checkApp(&app))
+				}
+			})
+		}
+	})
+
+	t.Run("Search", func(t *testing.T) {
+		apps, err := collector.Search(context.Background(), SearchSpec{Query: "netflix", Count: 1})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Len(t, apps, 1)
+
+		for _, app := range apps {
+			assert.NoError(t, checkApp(&app))
+		}
+
+		// Check for main app
+		assert.Equal(t, "Netflix", apps[0].Title)
+		assert.Equal(t, "com.netflix.mediaclient", apps[0].AppID)
+	})
+
+	t.Run("DataSafety", func(t *testing.T) {
+		result, err := collector.DataSafety(context.Background(), ApplicationSpec{
+			AppID: "com.sgn.pandapop.gp",
+		})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.NotEmpty(t, result.SharedData)
+		assert.NotEmpty(t, result.CollectedData)
+		assert.NotEmpty(t, result.SecurityPractice)
+
+		_, err = url.Parse(result.PrivacyPolicyURL)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Permissions", func(t *testing.T) {
+		perms, err := collector.Permissions(context.Background(), ApplicationSpec{
+			AppID: "com.sgn.pandapop.gp",
+			Full:  true,
+		})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Len(t, perms, 14)
+	})
+
+	t.Run("Suggest", func(t *testing.T) {
+		result, err := collector.Suggest(context.Background(), SearchSpec{Query: "p"})
+
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Len(t, result, 5)
+
+		for _, ok := range shared.Map(result, func(val string) bool {
+			return strings.HasPrefix(val, "p")
+		}) {
+			assert.True(t, ok)
+		}
+	})
+
+	t.Run("Reviews", func(t *testing.T) {
+		result, err := collector.Reviews(context.Background(), ReviewsSpec{AppID: "com.sgn.pandapop.gp", Count: 1})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Len(t, result, 1)
+
+		for _, review := range result {
+			assert.NotEmpty(t, review.ID)
+			assert.NotEmpty(t, review.URL)
+		}
 	})
 }

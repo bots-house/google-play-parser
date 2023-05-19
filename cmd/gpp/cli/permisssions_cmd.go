@@ -7,11 +7,11 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var appCMD = &cli.Command{
-	Name: "app",
+var permissionsCMD = &cli.Command{
+	Name:    "permissions",
+	Aliases: []string{"perm"},
 	Flags: []cli.Flag{
 		appIDFlag,
-		countryFlag,
 		langFlag,
 		fullFlag,
 	},
@@ -22,14 +22,13 @@ var appCMD = &cli.Command{
 			return fmt.Errorf("app id not set")
 		}
 
-		result, err := collector.App(ctx.Context, gpp.ApplicationSpec{
-			AppID:   appIDFlag.Get(ctx),
-			Lang:    langFlag.Get(ctx),
-			Country: countryFlag.Get(ctx),
-			Full:    fullFlag.Get(ctx),
+		result, err := collector.Permissions(ctx.Context, gpp.ApplicationSpec{
+			AppID: appIDFlag.Get(ctx),
+			Lang:  langFlag.Get(ctx),
+			Full:  fullFlag.Get(ctx),
 		})
 		if err != nil {
-			return fmt.Errorf("app method: %w", err)
+			return fmt.Errorf("permissions method: %w", err)
 		}
 
 		return display(ctx, result)
