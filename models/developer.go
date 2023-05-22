@@ -15,7 +15,7 @@ type DeveloperSpec struct {
 }
 
 func (spec *DeveloperSpec) ensureNotNil() {
-	*spec = shared.Assign(spec, &DeveloperSpec{Lang: "en", Country: "us"})
+	*spec = shared.Assign(spec, &DeveloperSpec{Lang: "en", Country: "us", Count: 60})
 }
 
 func (spec *DeveloperSpec) Validate() error {

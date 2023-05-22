@@ -28,6 +28,10 @@ type pagesSpec struct {
 }
 
 func processPages(ctx context.Context, client sh.HTTPClient, spec pagesSpec) []models.App {
+	if len(spec.apps) <= spec.count && spec.token == "" {
+		return spec.apps
+	}
+
 	if len(spec.apps) >= spec.count || spec.token == "" {
 		return spec.apps[:spec.count]
 	}

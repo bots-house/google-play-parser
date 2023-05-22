@@ -152,6 +152,7 @@ func Test_Scraper(t *testing.T) {
 				name: "Developer name",
 				spec: DeveloperSpec{
 					DevID: "Jam City, Inc.",
+					Full:  true,
 				},
 			},
 
@@ -159,6 +160,7 @@ func Test_Scraper(t *testing.T) {
 				name: "Developer id",
 				spec: DeveloperSpec{
 					DevID: "5700313618786177705",
+					Full:  true,
 				},
 			},
 		}

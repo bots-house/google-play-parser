@@ -48,6 +48,10 @@ func Developer(ctx context.Context, client sh.HTTPClient, spec models.DeveloperS
 		count: spec.Count,
 	})
 
+	if len(apps) == 0 {
+		return nil, fmt.Errorf("apps not found")
+	}
+
 	if !spec.Full {
 		return apps, nil
 	}
