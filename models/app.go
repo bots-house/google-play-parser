@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/bots-house/google-play-parser/internal/shared"
 )
@@ -59,6 +60,21 @@ type App struct {
 
 func (app *App) Assign(rhs *App) App {
 	return shared.Assign(app, rhs)
+}
+
+func (app *App) Unquote() {
+	developer, err := url.QueryUnescape(app.Developer)
+	if err != nil {
+		developer = app.Developer
+	}
+
+	developerID, err := url.QueryUnescape(app.DeveloperID)
+	if err != nil {
+		developerID = app.DeveloperID
+	}
+
+	app.Developer = developer
+	app.DeveloperID = developerID
 }
 
 type ApplicationSpec struct {

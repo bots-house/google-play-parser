@@ -41,6 +41,7 @@ func App(ctx context.Context, client sh.HTTPClient, spec models.ApplicationSpec)
 	}
 
 	app.Developer = strings.Split(app.Developer, "id=")[1]
+	app.Unquote()
 
 	return app.Assign(&models.App{AppID: spec.AppID, URL: requestURL}), nil
 }
