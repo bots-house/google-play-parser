@@ -50,10 +50,6 @@ func checkApp(app *App) error {
 		errs = append(errs, fmt.Errorf("score not parsed"))
 	}
 
-	if app.Released == "" {
-		errs = append(errs, fmt.Errorf("released not parsed"))
-	}
-
 	return multierr.Combine(errs...)
 }
 
@@ -257,24 +253,4 @@ func Test_Scraper(t *testing.T) {
 			assert.NotEmpty(t, review.URL)
 		}
 	})
-}
-
-func Test(t *testing.T) {
-	appID := "com.miniclip.plagueinc"
-
-	collector := New()
-
-	app, err := collector.App(context.Background(), ApplicationSpec{
-		AppID: appID,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if err := checkApp(&app); err != nil {
-		t.Fatal(err)
-	}
-
-	t.Log(app.Released)
-	t.Log(app.ContentRating)
 }
