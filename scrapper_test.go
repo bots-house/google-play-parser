@@ -254,3 +254,41 @@ func Test_Scraper(t *testing.T) {
 		}
 	})
 }
+
+func Test_InAppPurchases(t *testing.T) {
+	tests := []struct {
+		appID         string
+		inAppPurchase bool
+	}{
+		{
+			appID:         "com.mojang.minecraftpe",
+			inAppPurchase: true,
+		},
+
+		{
+			appID:         "com.miniclip.plagueinc",
+			inAppPurchase: true,
+		},
+
+		{
+			appID: "com.einnovation.temu",
+		},
+
+		{
+			appID: "com.whatsapp",
+		},
+	}
+
+	collector := New()
+
+	for _, test := range tests {
+		app, err := collector.App(context.Background(), ApplicationSpec{
+			AppID: test.appID,
+		})
+		if !assert.NoError(t, err) {
+			return
+		}
+
+		assert.Equal(t, test.inAppPurchase, app.InAppPurchase)
+	}
+}

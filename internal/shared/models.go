@@ -81,6 +81,7 @@ type AppMapping struct {
 	Version                  MappingWithFunc[string, string]
 	RecentChanges            []any
 	Comments                 []any // TODO: no comments by this path
+	InAppPurchase            MappingWithFunc[string, bool]
 }
 
 type MappingWithFunc[I, O any] struct {
