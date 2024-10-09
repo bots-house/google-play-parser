@@ -54,6 +54,7 @@ type App struct {
 	Version                  string          `json:"version,omitempty"`
 	RecentChanges            string          `json:"recent_changes,omitempty"`
 	Comments                 []any           `json:"comments,omitempty"`
+	InAppPurchase            bool            `json:"in_app_purchase"`
 }
 
 func newFromInternal(app *models.App) App {
@@ -105,6 +106,7 @@ func newFromInternal(app *models.App) App {
 		Version:                  app.Version,
 		RecentChanges:            app.RecentChanges,
 		Comments:                 app.Comments,
+		InAppPurchase:            app.InAppPurchase,
 	}
 }
 

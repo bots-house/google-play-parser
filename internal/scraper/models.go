@@ -232,6 +232,12 @@ var appDetailsMapping = shared.AppMapping{
 	},
 	RecentChanges: []any{"ds:5", 1, 2, 144, 1, 1},
 	Comments:      []any{"ds:9", 0},
+	InAppPurchase: shared.MappingWithFunc[string, bool]{
+		Path: []any{"ds:5", 1, 2, 9, 3, 1},
+		Fun: func(s string) bool {
+			return strings.Contains(s, "Purchase")
+		},
+	},
 }
 
 type dataSafety struct {

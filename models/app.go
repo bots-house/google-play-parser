@@ -56,6 +56,7 @@ type App struct {
 	Version                  string
 	RecentChanges            string
 	Comments                 []any
+	InAppPurchase            bool
 }
 
 func (app *App) Assign(rhs *App) App {
