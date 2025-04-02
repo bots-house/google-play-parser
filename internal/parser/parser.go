@@ -45,8 +45,15 @@ func parseScriptData(scriptData [][]byte, keyPattern, valuePattern *regexp.Regex
 		keyData := keyPattern.Find(data)
 		valueData := valuePattern.Find(data)
 
-		parsed = append(parsed, keyPattern.ReplaceAll(keyData, []byte(`"$key":`))...)
-		parsed = append(parsed, valuePattern.ReplaceAll(valueData, []byte(`$value`))...)
+		keyDataReplaced := keyPattern.ReplaceAll(keyData, []byte(`"$key":`))
+		valueDataReplaced := valuePattern.ReplaceAll(valueData, []byte(`$value`))
+
+		if len(keyDataReplaced) == 0 || len(valueDataReplaced) == 0 {
+			continue
+		}
+
+		parsed = append(parsed, keyDataReplaced...)
+		parsed = append(parsed, valueDataReplaced...)
 
 		if idx < len(scriptData)-1 {
 			parsed = append(parsed, []byte(`,`)...)

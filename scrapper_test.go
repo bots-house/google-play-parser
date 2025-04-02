@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -290,5 +291,39 @@ func Test_InAppPurchases(t *testing.T) {
 		}
 
 		assert.Equal(t, test.inAppPurchase, app.InAppPurchase)
+	}
+}
+
+func TestMissingDeveloperNames(t *testing.T) {
+	c := New()
+
+	tests := []struct {
+		id string
+	}{
+		{
+			id: "com.particlenews.newsbreak",
+		},
+
+		{
+			id: "com.xphotokit.chatgptassist",
+		},
+
+		{
+			id: "com.newleaf.app.android.victor",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.id, func(t *testing.T) {
+			app, err := c.App(context.Background(), ApplicationSpec{AppID: test.id})
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+			if _, err := strconv.ParseInt(app.Developer, 10, strconv.IntSize); err == nil {
+				t.Error("developer name is id")
+			}
+		})
 	}
 }
