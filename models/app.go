@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/bots-house/google-play-parser/internal/shared"
 )
@@ -73,6 +74,8 @@ func (app *App) Unquote() {
 	if err != nil {
 		developerID = app.DeveloperID
 	}
+
+	developer = strings.ReplaceAll(developer, "+", " ")
 
 	app.Developer = developer
 	app.DeveloperID = developerID
